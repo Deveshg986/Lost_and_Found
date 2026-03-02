@@ -1,26 +1,32 @@
-import { Routes, Route } from "react-router-dom"
-import MainLayout from "./Layout/MainLayout"
+import { Routes, Route } from "react-router-dom";
+import MainLayout from "./Layout/MainLayout";
+import AuthLayout from "./Layout/AuthLayout";
 
-import Home from "./pages/Home"
-import ReportItem from "./pages/ReportItem"
-import ClaimItem from "./pages/ClaimItem"
-import NotFound from "./pages/NotFound"
-import LostItems from "./pages/LostItems"
+import Login from "./pages/Login";
+import Home from "./pages/Home";
+import Report from "./pages/ReportItem";
+import LostItem from "./pages/LostItems";
+// import Contact from "./pages/Contact";
 
-// import NotFound from "./pages/NotFound"
 function App() {
   return (
     <Routes>
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="report" element={<ReportItem />} />
-        <Route path="claim" element={<ClaimItem />} />
-        <Route path="/lostitem" element={<LostItems />} />
-        <Route path="*" element={<NotFound />} />
+
+      {/* Auth Routes (Full Page, No Navbar) */}
+      <Route element={<AuthLayout />}>
+        <Route path="/" element={<Login />} />
       </Route>
-      {/* <Route path="*" element={<NotFound />} /> */}
+
+      {/* Main Website Routes (With Navbar + Footer) */}
+      <Route element={<MainLayout />}>
+        <Route path="/home" element={<Home />} />
+        <Route path="/report" element={<Report />} />
+        <Route path="/lostitem" element={<LostItem />} />
+        {/* <Route path="/contact" element={<Contact />} /> */}
+      </Route>
+
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;
