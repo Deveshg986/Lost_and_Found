@@ -1,16 +1,16 @@
 import { NavLink } from "react-router-dom";
-import logo from "../assets/LAF_Logo.png";
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
   return (
     <nav className="bg-gray-900 text-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+      <div className="max-w-7xl  px-6 py-4 flex items-center justify-between">
+        <div className="flex flex-row items-center space-x-4">
         <div className="flex items-center gap-2">
             <img src={logo} alt="Lost & Found Logo" className="h-15" />
         </div>
           <div>
-            <h1 className="text-xl font-bold text-indigo-400">
+            <h1 className="text-3xl font-bold text-indigo-400">
                 Lost And Found
             </h1>
           </div>
