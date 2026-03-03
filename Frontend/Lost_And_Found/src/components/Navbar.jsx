@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import logo from "../assets/logo.png";
-
+import React from "react";
 export default function Navbar() {
   return (
     <nav className="bg-gray-900 text-white shadow-lg">
