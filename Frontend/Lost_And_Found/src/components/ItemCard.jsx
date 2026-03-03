@@ -1,3 +1,4 @@
+import React from "react"
 const ItemCard=({items})=>{
     return(
 <div className="grid md:grid-cols-3 gap-6 my-2">

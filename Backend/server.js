@@ -1,37 +1,27 @@
-const express = require('express');
-const cors = require('cors');
-const db  = require('./db');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const db = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const itemRoutes = require("./routes/itemRoutes");
 
- const app = express();
+const app = express();
+const PORT = process.env.PORT || 5000;
 
- app.use(cors());
- app.use(express.json());
+app.use(cors());
+app.use(express.json());
 
- app.get('/', (req, res)=>{
-    res.send("hello world");
- });
+app.use("/api/auth", authRoutes);
+app.use("/api/items", itemRoutes);
 
- app.listen(5000, ()=>{
-    console.log("Server is Running on Port 5000")
- });
+db.connect((err) => {
+    if (err) {
+        console.log("Database Connection Error", err);
+    } else {
+        console.log("Database Connected");
 
- app.post('/', (req, res)=>{
-    const {email, password} = req.body;
-    const sql = `
-        SELECT id, full_name, roll_no, email, role, department
-        FROM users
-        WHERE email = ? AND password = ?
-    `;
-    db.query(sql, [email, password], (err, results)=>{
-        if(err){
-            console.log("Something Went Wrong", err);
-            res.status(401).json({message: "Something Went Wrong"});
-        }
-        if(results.length > 0){
-            res.status(200).json({message: "Login Sucessful", user: results[0]});
-        }
-        else{
-            res.status(401).json({message: "Invalide Email or Passwors"});
-        }
-    })
- })
+        app.listen(PORT, () => {
+            console.log(`Server Started at PORT ${PORT}`);
+        });
+    }
+});

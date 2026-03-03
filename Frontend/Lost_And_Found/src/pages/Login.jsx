@@ -1,85 +1,73 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-export default function Login() {
-
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        formData
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        { email, password }
       );
 
-      // Save logged-in user
-      localStorage.setItem("user", JSON.stringify(res.data));
+      // Since axios only comes here for 200-299
+      const user = response.data.user;
 
-      navigate("/home");
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+        navigate("/home");
+      } else {
+        alert("Login failed. No user data received.");
+      }
 
     } catch (error) {
-        console.log(error);
-        alert("Invalid Email or Password");
+      alert(error.response?.data?.message || "Login Failed");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-      <div className="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8">
-
-        <h2 className="text-3xl font-bold text-center text-indigo-500 mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-96">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Login
         </h2>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-
+        <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full border rounded-lg px-4 py-2"
+            placeholder="Enter Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
+            className="w-full px-4 py-2 border rounded-lg"
           />
 
           <input
             type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full border rounded-lg px-4 py-2"
+            placeholder="Enter Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
+            className="w-full px-4 py-2 border rounded-lg"
           />
 
           <button
             type="submit"
-            className="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition duration-300"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
           >
             Login
           </button>
-
         </form>
-
       </div>
     </div>
   );
 }
+
+export default Login;
