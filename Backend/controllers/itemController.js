@@ -35,3 +35,25 @@ exports.addItem = (req, res) => {
         }
     );
 };
+
+exports.allItems = (req, res) => {
+
+    const sql = "SELECT * FROM items";
+
+    db.query(sql, (err, results) => {
+
+        if (err) {
+            console.error("Database Error:", err);
+            return res.status(500).json({
+                message: "Database Error"
+            });
+        }
+
+        return res.status(200).json({
+            count: results.length,
+            items: results
+        });
+
+    });
+
+};
