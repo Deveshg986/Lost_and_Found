@@ -42,7 +42,16 @@ export default function ReportItem() {
 
       const response = await axios.post(
         "http://localhost:5000/api/items/report",
+<<<<<<< HEAD
         formData
+=======
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+>>>>>>> f75c8b274ae81c07ad25b3d559f1e72b889ee322
       );
 
       alert(response.data.message);
@@ -96,7 +105,10 @@ export default function ReportItem() {
             </label>
 
             <textarea
+<<<<<<< HEAD
               id="description"
+=======
+>>>>>>> f75c8b274ae81c07ad25b3d559f1e72b889ee322
               name="description"
               rows={4}
               placeholder="Enter item description"
