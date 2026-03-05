@@ -10,6 +10,10 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+<<<<<<< HEAD
+app.use("/uploads", express.static("uploads"));
+=======
+>>>>>>> f75c8b274ae81c07ad25b3d559f1e72b889ee322
 
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);

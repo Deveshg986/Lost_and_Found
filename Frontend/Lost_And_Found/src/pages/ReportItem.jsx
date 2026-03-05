@@ -48,6 +48,7 @@ export default function ReportItem() {
             "Content-Type": "multipart/form-data"
           }
         }
+
       );
 
       alert(response.data.message);
@@ -77,12 +78,14 @@ export default function ReportItem() {
         </h2>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
+          
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-1">
               Item Name
             </label>
 
             <input
+              id="title"
               type="text"
               name="title"
               placeholder="Enter item name"
@@ -94,11 +97,12 @@ export default function ReportItem() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-1">
               Description
             </label>
 
             <textarea
+              id="description"
               name="description"
               rows={4}
               placeholder="Enter item description"
@@ -110,11 +114,12 @@ export default function ReportItem() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label htmlFor="location" className="block text-sm font-semibold text-gray-700 mb-1">
               Location
             </label>
 
             <input
+              id="location"
               type="text"
               name="location"
               placeholder="Enter item location"
@@ -126,11 +131,12 @@ export default function ReportItem() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label htmlFor="image" className="block text-sm font-semibold text-gray-700 mb-1">
               Image of Item
             </label>
 
             <input
+              id="image"
               type="file"
               name="image"
               ref={fileInputRef}
