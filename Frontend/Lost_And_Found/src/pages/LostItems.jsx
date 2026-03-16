@@ -14,7 +14,7 @@ export default function LostItems() {
       .catch((err) => {
         console.error("Error fetching items:", err);
       });
-  }, []);
+  }, [items]); 
 
   return (
     <ItemCard items={items} />
