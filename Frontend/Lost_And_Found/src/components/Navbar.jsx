@@ -25,7 +25,7 @@ export default function Navbar() {
       to  : "/home",
     },
     {
-      name : "Report Found Item",
+      name : "Report Item",
       to  : "/report",
     },
     {
@@ -54,25 +54,30 @@ export default function Navbar() {
             Lost And Found
           </h1>
         </div>
-
-        <div className="hidden md:flex gap-8 font-medium text-1.52xl">
+        <div className="hidden md:flex gap-8 font-medium">
           {
             navElements.map( (element ) => {
               return(
-                <NavLink to={element.to} className={({isActive}) => {
-              `px-3 py-2 font-medium transition-all duration-300 transform
-              ${
-                isActive
-                  ? "text-indigo-400 scale-110"
-                  : "text-amber-50 hover:text-indigo-300 hover:scale-110"
-              }`
-              }}
-              key={element.name}>
-                {element.name}
-              </NavLink>
+                <NavLink to={element.to} className={({isActive}) =>
+                  `px-3 py-2 font-medium transition-all duration-300 transform text-white
+                  ${
+                    isActive
+                      ? "text-indigo-400 scale-110"
+                      : "text-amber-50 hover:text-indigo-300 hover:scale-110"
+                  }`
+                  } key={element.name}>
+                  {element.name}
+                </NavLink>
               )
             })
           }
+      
+          user.data != null 
+          ?  <button onClick={`add login functionality`}>
+              LogOut
+            </button>
+          : null
+
         </div>
                   {/* Logout */}
         <div>

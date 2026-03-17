@@ -13,9 +13,6 @@ function Home() {
   const [filter, setFilter] = useState("unclaimed"); //filter for browsing items(claimed or unclaimed)
   function  handleChange(e){
     setFilter(e.target.value);
-    console.log("filter: ",filter);
-    console.log("e: ",e.target.value);
-    
   };
 
   useEffect(() => {
@@ -27,6 +24,7 @@ function Home() {
         console.error("Error fetching items:", err);
       });
   }, [filter]);
+
   return (
     <div className="w-full">
       <div className="w-full h-12 bg-slate-500 p-auto flex items-center">
@@ -39,7 +37,10 @@ function Home() {
     
       <h1>{user.role}</h1>
       <ItemCard items={items} />
+    <div>
+      <h1>Welcome {user?.full_name}</h1>
     </div>
+  </div>
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ItemCard = ({ items, noFilter }) => {
+const ItemCard = ({ items }) => {
   const [user] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;

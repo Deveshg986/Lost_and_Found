@@ -27,6 +27,7 @@ function Login() {
         localStorage.setItem("token", token)
         dispatch(login(user))
         navigate("/home");
+        
       } else {
         alert("Login failed. No user data received.");
       }
