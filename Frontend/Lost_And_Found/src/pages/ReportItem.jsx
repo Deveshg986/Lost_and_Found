@@ -32,6 +32,7 @@ export default function ReportItem() {
 
     try {
       const user = JSON.parse(localStorage.getItem("user"));
+      const token = localStorage.getItem("token");
 
       const formData = new FormData();
       formData.append("title", report.title);
@@ -39,13 +40,19 @@ export default function ReportItem() {
       formData.append("location", report.location);
       formData.append("uploaded_by", user.id);
       formData.append("image", report.image);
+      formData.append("status", 
+        user.role?.trim().toLowerCase()==='staff'?
+        'UNCLAIMED':
+        'REQUESTED');
+
 
       const response = await axios.post(
         "http://localhost:5000/api/items/report",
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data"
+            // "Content-Type": "multipart/form-data",   // causes bug : error submitting
+            Authorization: `Bearer ${token}`,// adedd because i was getting error : token missing
           }
         }
 

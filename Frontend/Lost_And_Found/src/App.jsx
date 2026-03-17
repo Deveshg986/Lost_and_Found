@@ -25,7 +25,6 @@ function App() {
         <Route path="/lostitems" element={<LostItem />} />
         {/* <Route path="/contact" element={<Contact />} /> */}
       </Route>
-
     </Routes>
   );
 }

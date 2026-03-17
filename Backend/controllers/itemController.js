@@ -1,9 +1,10 @@
+
 const db = require("../config/db");
+
 
 const addItem = (req, res) => {
 
-    const { title, description, location, uploaded_by } = req.body;
-
+    const { title, description, location, uploaded_by, status } = req.body;
     const image = req.file ? req.file.filename : null;
 
     if (!title || !location || !uploaded_by) {
@@ -15,12 +16,12 @@ const addItem = (req, res) => {
     const sql = `
         INSERT INTO items
         (title, description, location, image, status, uploaded_by)
-        VALUES (?, ?, ?, ?, 'LOST', ?)
+        VALUES (?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
         sql,
-        [title, description, location, image, uploaded_by],
+        [title, description, location, image, status, uploaded_by],
         (err, result) => {
 
             if (err) {
