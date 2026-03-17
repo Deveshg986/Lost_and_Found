@@ -34,7 +34,6 @@ const ItemCard = ({ items }) => {
           <button className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-md">
             Claim Item
           </button>
-
         </div>
       ))}
     </div>

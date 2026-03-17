@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-exports.addItem = (req, res) => {
+const addItem = (req, res) => {
 
     const { title, description, location, uploaded_by } = req.body;
 
@@ -36,7 +36,7 @@ exports.addItem = (req, res) => {
     );
 };
 
-exports.allItems = (req, res) => {
+const allItems = (req, res) => {
 
     const sql = "SELECT * FROM items";
 
@@ -48,12 +48,11 @@ exports.allItems = (req, res) => {
                 message: "Database Error"
             });
         }
-
         return res.status(200).json({
             count: results.length,
             items: results
         });
-
     });
 
 };
+module.exports = {addItem, allItems}

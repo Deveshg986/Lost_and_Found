@@ -19,9 +19,10 @@ function Login() {
 
       // Since axios only comes here for 200-299
       const user = response.data.user;
-
-      if (user) {
+      const token = response.data.token;
+      if (user && token) {
         localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token)
         navigate("/home");
       } else {
         alert("Login failed. No user data received.");
@@ -65,6 +66,7 @@ function Login() {
             Login
           </button>
         </form>
+        <p>Dont Have an Account? Create one <a href="/signup" className=" hover:text-blue-700 transition duration-300" >Sign-up</a></p>
       </div>
     </div>
   );
