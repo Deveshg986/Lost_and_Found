@@ -10,7 +10,7 @@ function Home() {
   return (
     <div>
       <h1>Welcome {user?.full_name}</h1>
-      <p>Your Role is {user?.role}</p>
+      <p>Your Role is {user?.role}</p> 
       <p>Your Department is {user?.department}</p>
       <p>Your Roll number is {user?.roll_no}</p>
     </div>
