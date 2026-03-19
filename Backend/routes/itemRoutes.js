@@ -8,7 +8,7 @@ const {
   addItem,
   allItems,
   deleteItems,
-  getPendignItem,
+  getPendingItem,
   rejectItem,
   approveItem
 } = require("../controllers/itemController");

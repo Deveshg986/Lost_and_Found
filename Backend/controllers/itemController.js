@@ -90,7 +90,7 @@ const deleteItems = (req, res) => {
     });
 };
 
-const getPendignItem = (req, res)=>{
+const getPendingItem = (req, res)=>{
     const sql = "SELECT * FROM items WHERE status = 'PENDING'";
     db.query(sql, (err, results)=>{
         if (err) {
