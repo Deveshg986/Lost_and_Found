@@ -40,20 +40,21 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex gap-8 font-medium">
-          {
-            navElements.map( (element ) => {
-              <NavLink to={element.to} className={({isActive}) => {
-              `px-3 py-2 font-medium transition-all duration-300 transform
-              ${
-                isActive
-                  ? "text-indigo-400 scale-110"
-                  : "text-amber-50 hover:text-indigo-300 hover:scale-110"
-              }`
-              }}>
-                {element.name}
-              </NavLink>
-            })
-          }
+          {navElements.map((element) => (
+            <NavLink
+              key={element.to}
+              to={element.to}
+              className={({ isActive }) =>
+                `px-3 py-2 font-medium transition-all duration-300 transform ${
+                  isActive
+                    ? "text-indigo-400 scale-110"
+                    : "text-amber-50 hover:text-indigo-300 hover:scale-110"
+                }`
+              }
+            >
+              {element.name}
+            </NavLink>
+          ))}
         </div>
                   {/* Logout */}
         <div>

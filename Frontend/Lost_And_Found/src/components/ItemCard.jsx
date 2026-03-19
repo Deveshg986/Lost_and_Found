@@ -1,11 +1,10 @@
 import React from "react";
-
+import { useState } from "react";
 const ItemCard = ({ items }) => {
     const [user] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
-
   return (
     <div className="grid md:grid-cols-3 gap-6 my-2">
       {items.map((item) => (
@@ -35,7 +34,7 @@ const ItemCard = ({ items }) => {
           </button>
           
           {
-            user?.role === 'staff' ? (
+            user?.role === 'STAFF' ? (
           <button className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md">
             Delete Item
           </button>) : null
