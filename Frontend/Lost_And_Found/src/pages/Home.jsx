@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ItemCard } from "../components";
+import { ItemCard, LoadingCard } from "../components";
 import axios from "axios";
 
 function Home() {
@@ -49,12 +49,12 @@ function Home() {
               type="text"
               name="title"
               placeholder="Search here"
-              className="w-full p-2  focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="w-full p-2 ring-2 focus:outline-none focus:ring-2 focus:ring-gray-900"
               
               onChange={handleSearch}
               required
             />
-            <select onChange={handleChange} name="dataFilter" value={filter} className=" py-2 font-medium transition-all duration-300 transform mr-4 focus:outline-none border-r-gray-900">
+            <select onChange={handleChange} name="dataFilter" value={filter} className=" py-2 font-medium transition-all duration-300 transform mr-4 focus:outline-none focus:ring-0">
             <option value="claimed">Claimed</option>
             <option value="unclaimed">UnClaimed</option>
             </select>
@@ -62,9 +62,13 @@ function Home() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <ItemCard items={items} filter={filter} searchVal={searchVal} />
-      </div>
+      
+        {
+          items ?
+          (<ItemCard items={items} filter={filter} searchVal={searchVal} />) :
+          (<LoadingCard/>)
+        }
+      
   </div>
   );
 }
