@@ -1,11 +1,9 @@
 import axios from "axios";
-import ItemCard from "../components/ItemCard";
+import {ItemCard} from "../components";
 import React, { useState, useEffect } from "react";
 
-export default function LostItems() {
-
-  const [items, setItems] = useState([]);
-
+export default function Requests() {
+    const [items, setItems] = useState([]);
   useEffect(() => {
     axios.get("http://localhost:5000/api/items/approved",{
       headers:{
@@ -18,9 +16,10 @@ export default function LostItems() {
       .catch((err) => {
         console.error("Error fetching items:", err);
       });
-  }, [items]);
-
+  }, []);
+    console.log("inside requests");
+    
   return (
-    <ItemCard items={items} />
+    <ItemCard items={items} Filter="requested" />
   );
 }
