@@ -29,21 +29,15 @@ export default function Navbar() {
       to  : "/report",
     },
     {
-      name : "Lost Items",
-      to  : "/lostitems",
+      name : "Requests",
+      to  : "/requests",
     },
     {
       name : "Contact",
       to  : "/contact",
     },
   ]
-  
-  user?.role?.trim().toLowerCase() === "staff" ?
-  navElements.push({
-    name: "Requests",
-    to : "/requests",
-  }) :
-  null
+
 
   return (
     <nav className="bg-gray-900 text-white shadow-lg">
@@ -72,11 +66,11 @@ export default function Navbar() {
             })
           }
       
-          user.data != null 
+          {user.data != null 
           ?  <button onClick={`add login functionality`}>
               LogOut
             </button>
-          : null
+          : null}
 
         </div>
                   {/* Logout */}

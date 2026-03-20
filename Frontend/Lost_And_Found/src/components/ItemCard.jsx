@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 
-const ItemCard = ({ items }) => {
+const ItemCard = ({ items, filter, searchVal }) => {
   const [user] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
-
   
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -34,7 +33,6 @@ const ItemCard = ({ items }) => {
               <h3 className="text-lg font-semibold text-gray-800 truncate">
                 {item.title}
               </h3>
-
               <p className="text-sm text-gray-500 mt-1 line-clamp-2">
                 {item.description}
               </p>

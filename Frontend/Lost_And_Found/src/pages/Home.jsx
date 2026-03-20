@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ItemCard from "../components/ItemCard";
+import { ItemCard } from "../components";
 import axios from "axios";
 
 function Home() {
@@ -9,10 +9,13 @@ function Home() {
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [items, setItems] = useState([]);
-  
   const [filter, setFilter] = useState("unclaimed"); //filter for browsing items(claimed or unclaimed)
+  const [searchVal, setSearchVal] = useState("");
   function  handleChange(e){
     setFilter(e.target.value);
+  };
+  function  handleSearch(e){
+    setSearchVal(e.target.value);
   };
 
   useEffect(() => {
@@ -23,23 +26,41 @@ function Home() {
       .catch((err) => {
         console.error("Error fetching items:", err);
       });
-  }, [filter]);
+  }, [filter, searchVal]);
+  
 
   return (
-    <div className="w-full">
-      <div className="w-full h-12 bg-slate-500 p-auto flex items-center">
-        <h1 className="mr-auto ml-4">Welcome {user?.full_name}</h1>
-        <select onChange={handleChange} name="dataFilter" value={filter} className="px-3 py-2 font-medium transition-all duration-300 transform mr-4">
-          <option value="claimed">Claimed</option>
-          <option value="unclaimed">UnClaimed</option>
-        </select>
+    <div className="w-full min-h-screen bg-gray-50">
+
+      <div className="w-full bg-white shadow-sm border-b">
+
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between px-4 py-3 gap-3">
+          
+          <h1 className="text-lg font-semibold text-gray-800">Welcome {user?.full_name}
+          </h1>
+
+          <div className="flex w-full md:w-auto gap-2 items-center">
+            <input
+              id="title"
+              type="text"
+              name="title"
+              placeholder="Search here"
+              className="w-full p-2  focus:outline-none focus:ring-2 focus:ring-gray-900"
+              
+              onChange={handleSearch}
+              required
+            />
+            <select onChange={handleChange} name="dataFilter" value={filter} className=" py-2 font-medium transition-all duration-300 transform mr-4 focus:outline-none border-r-gray-900">
+            <option value="claimed">Claimed</option>
+            <option value="unclaimed">UnClaimed</option>
+            </select>
+          </div>
+        </div>
       </div>
-    
-      <h1>{user.role}</h1>
-      <ItemCard items={items} />
-    <div>
-      <h1>Welcome {user?.full_name}</h1>
-    </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <ItemCard items={items} filter={filter} searchVal={searchVal} />
+      </div>
   </div>
   );
 }

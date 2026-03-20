@@ -2,12 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import React from "react";
 import MainLayout from "./Layout/MainLayout";
 import AuthLayout from "./Layout/AuthLayout";
+import { Login,  Home,  Report,  Signup,  Requests} from "./pages"
 
-import Login from "./pages/Login";
-import Home from "./pages/Home";
-import Report from "./pages/ReportItem";
-import LostItem from "./pages/LostItems";
-import Signup from "./pages/Signup";
 // import Contact from "./pages/Contact";
 
 function App() {
@@ -22,7 +18,7 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/home" element={<Home />} />
         <Route path="/report" element={<Report />} />
-        <Route path="/lostitems" element={<LostItem />} />
+        <Route path="/requests" element={<Requests />} />
         {/* <Route path="/contact" element={<Contact />} /> */}
       </Route>
     </Routes>
