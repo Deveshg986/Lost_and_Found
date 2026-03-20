@@ -1,17 +1,17 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/authSlice";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const [user] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+  const user = useSelector((state) => state.auth.userData)
+  // const [user] = useState(() => {
+  //   const storedUser = localStorage.getItem("user");
+  //   return storedUser ? JSON.parse(storedUser) : null;
+  // });
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -29,14 +29,17 @@ export default function Navbar() {
       to  : "/report",
     },
     {
-      name : "Requests",
-      to  : "/requests",
-    },
-    {
       name : "Contact",
       to  : "/contact",
     },
   ]
+
+  if(user && user.role?.toLowerCase() === "staff"){
+    navElements.push({
+      name : "Requests",
+      to  : "/requests",
+    })
+  }
 
 
   return (
@@ -48,7 +51,7 @@ export default function Navbar() {
             Lost And Found
           </h1>
         </div>
-        <div className="hidden md:flex gap-8 font-medium">
+        <div className="hidden md:flex gap-8 font-medium ">
           {
             navElements.map( (element ) => {
               return(
@@ -66,21 +69,15 @@ export default function Navbar() {
             })
           }
       
-          {user.data != null 
-          ?  <button onClick={`add login functionality`}>
+          {user != null
+          ? <button
+              onClick={handleLogout}
+              className="px-3 py-2 font-medium transition-all duration-300 transform text-amber-50 hover:text-indigo-300 hover:scale-110"
+              >
               LogOut
             </button>
           : null}
 
-        </div>
-                  {/* Logout */}
-        <div>
-          <button
-            onClick={handleLogout}
-            className="px-3 py-2 font-medium transition-all duration-300 transform text-amber-50 hover:text-indigo-300 hover:scale-110"
-          >
-            Logout
-          </button>
         </div>
       </div>
     </nav>
