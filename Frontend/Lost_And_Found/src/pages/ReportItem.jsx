@@ -3,7 +3,7 @@ import axios from "axios";
 
 export default function ReportItem() {
   const fileInputRef = useRef(null);
-
+  const token = localStorage.getItem("token");
   const [report, setReport] = useState({
     title: "",
     description: "",
@@ -51,8 +51,9 @@ export default function ReportItem() {
         formData,
         {
           headers: {
-            // "Content-Type": "multipart/form-data",   // causes bug : error submitting
-            Authorization: `Bearer ${token}`,// adedd because i was getting error : token missing
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`
+
           }
         }
 

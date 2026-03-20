@@ -61,6 +61,7 @@ const ItemCard = ({ items, filter, searchVal }) => {
               )}
             </div>
           </div>
+
         </div>
       )
       )}

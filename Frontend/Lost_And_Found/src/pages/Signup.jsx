@@ -51,7 +51,6 @@ function Signup() {
           <input type="password" name="password" placeholder="Password" onChange={handleChange} required className="w-full p-2 border rounded" />
           <input name="phone" placeholder="Phone (optional)" onChange={handleChange} className="w-full p-2 border rounded" />
           <input name="department" placeholder="Department" onChange={handleChange} className="w-full p-2 border rounded" />
-
           <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
             Signup
           </button>

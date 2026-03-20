@@ -51,6 +51,7 @@ export default function Navbar() {
             Lost And Found
           </h1>
         </div>
+
         <div className="hidden md:flex gap-8 font-medium ">
           {
             navElements.map( (element ) => {
