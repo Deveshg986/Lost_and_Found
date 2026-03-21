@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 export default function Requests() {
     const [items, setItems] = useState([]);
   useEffect(() => {
-    axios.get("http://localhost:5000/api/items/approved",{
+    axios.get("http://localhost:5000/api/items/pending",{
       headers:{
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -17,8 +17,6 @@ export default function Requests() {
         console.error("Error fetching items:", err);
       });
   }, []);
-    console.log("inside requests");
-    
   return (
     <ItemCard items={items} Filter="requested" />
   );

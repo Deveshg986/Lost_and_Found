@@ -38,19 +38,17 @@ export default function ReportItem() {
       formData.append("title", report.title);
       formData.append("description", report.description);
       formData.append("location", report.location);
-      formData.append("uploaded_by", user?.id);
+      // formData.append("uploaded_by", user?.id); //Again For Security Purpose
       formData.append("image", report.image);
 
-      //FIXED STATUS (match DB)
-      formData.append(
-        "status",
-        user?.role?.trim().toLowerCase() === "staff"
-          ? "APPROVED"
-          : "PENDING"
-      );
+      //Fix The Code For Security Pupose Status Should change in Backend based on role not from Frontend
+      const url = 
+      user?.role?.toLowerCase() === "staff"
+      ? "http://localhost:5000/api/items/staff/report"
+      : "http://localhost:5000/api/items/report"
 
       const response = await axios.post(
-        "http://localhost:5000/api/items/report",
+        url,
         formData,
         {
           headers: {

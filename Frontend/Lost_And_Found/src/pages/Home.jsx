@@ -19,7 +19,11 @@ function Home() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/items")
+    axios.get("http://localhost:5000/api/items",{
+      headers:{
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }}
+    )
       .then((res) => {
         setItems(res.data.items);
       })

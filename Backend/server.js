@@ -5,6 +5,7 @@ const db = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
 const itemRoutes = require("./routes/itemRoutes");
+const claimRoutes = require("./routes/claimRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,6 +19,7 @@ app.use("/uploads", express.static("uploads"));
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
+app.use("/api/claims", claimRoutes);
 
 db.connect((err) => {
     if (err) {

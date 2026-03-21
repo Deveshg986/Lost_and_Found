@@ -1,28 +1,29 @@
-const express = require("express");
-const router = express.Router();
+  const express = require("express");
+  const router = express.Router();
 
-const verifyToken = require("../middleware/authMiddleware");
-const isStaff = require("../middleware/staffMiddleware");
+  const verifyToken = require("../middleware/authMiddleware");
+  const isStaff = require("../middleware/staffMiddleware");
 
-const {
-  addItem,
-  allItems,
-  deleteItems,
-  getPendingItem,
-  rejectItem,
-  approveItem
-} = require("../controllers/itemController");
+  const {
+    addItem,
+    allItems,
+    deleteItems,
+    getPendingItem,
+    rejectItem,
+    approveItem,
+    addItemStaff
+  } = require("../controllers/itemController");
+  const upload = require("../config/multer");
 
-const upload = require("../config/multer");
+  //These Are all of the Student API
+  router.post("/report", verifyToken, upload.single("image"), addItem);
+  router.get("/", verifyToken, allItems);
+  
+  //These Are all of the Staff API 
+  router.post("/staff/report", verifyToken, isStaff,   upload.single("image"), addItemStaff)
+  router.get("/pending", verifyToken, isStaff, getPendingItem);
+  router.put("/:id/approve", verifyToken, isStaff, approveItem);
+  router.put("/:id/reject", verifyToken, isStaff, rejectItem);
+  router.delete("/:id", verifyToken, isStaff, deleteItems);
 
-//These Are all of the Student API
-router.post("/report", verifyToken, upload.single("image"), addItem);
-router.get("/approved", verifyToken, allItems);
-
-//These Are all of the Staff API 
-router.get("/requested", verifyToken, isStaff, getPendingItem);
-router.put("/:id/approve", verifyToken, isStaff, approveItem);
-router.put("/:id/reject", verifyToken, isStaff, rejectItem);
-router.delete("/:id", verifyToken, isStaff, deleteItems);
-
-module.exports = router;
+  module.exports = router;

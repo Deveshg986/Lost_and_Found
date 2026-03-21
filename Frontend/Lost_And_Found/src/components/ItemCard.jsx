@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 
 const ItemCard = ({ items }) => {
@@ -5,6 +6,41 @@ const ItemCard = ({ items }) => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
+
+  const baseURL = "http://localhost:5000/api/items/";
+
+  const updateStatus = async (id, status) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      let url = "";
+      let method = "put";
+
+      if (status === "APPROVED") {
+        url = `${baseURL}${id}/approve`;
+      } else if (status === "REJECTED") {
+        url = `${baseURL}${id}/reject`;
+      } else if (status === "DELETED") {
+        url = `${baseURL}${id}`;
+        method = "delete";
+      }
+
+      await axios({
+        method,
+        url,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      alert(`Item ${status.toLowerCase()} successfully`);
+      window.location.reload();
+
+    } catch (err) {
+      console.log(err);
+      alert("Error updating status");
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -52,16 +88,43 @@ const ItemCard = ({ items }) => {
 
             {/* Actions */}
             <div className="mt-4 flex flex-col gap-2">
-              <button className="w-full bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium">
-                Claim Item
-              </button>
 
-              {/* Only staff can delete */}
+              {/* Claim only for approved */}
+              {item.status === "APPROVED" && (
+                <button className="w-full bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium">
+                  Claim Item
+                </button>
+              )}
+
+              {/* Staff controls */}
+              {user?.role?.trim().toLowerCase() === "staff" && item.status === "PENDING" && (
+                <>
+                  <button
+                    onClick={() => updateStatus(item.id, "APPROVED")}
+                    className="w-full bg-green-500 hover:bg-green-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                  >
+                    Approve Item
+                  </button>
+
+                  <button
+                    onClick={() => updateStatus(item.id, "REJECTED")}
+                    className="w-full bg-yellow-500 hover:bg-yellow-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                  >
+                    Reject Item
+                  </button>
+                </>
+              )}
+
+              {/* Delete for staff */}
               {user?.role?.trim().toLowerCase() === "staff" && (
-                <button className="w-full bg-red-500 hover:bg-red-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium">
+                <button
+                  onClick={() => updateStatus(item.id, "DELETED")}
+                  className="w-full bg-red-500 hover:bg-red-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                >
                   Delete Item
                 </button>
               )}
+
             </div>
           </div>
         </div>
