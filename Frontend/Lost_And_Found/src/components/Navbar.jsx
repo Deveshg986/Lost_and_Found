@@ -1,18 +1,18 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.auth.userData)
-  // const [user] = useState(() => {
-  //   const storedUser = localStorage.getItem("user");
-  //   return storedUser ? JSON.parse(storedUser) : null;
-  // });
+  // const user = useSelector((state) => state.auth.userData)
+  const [user] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -31,17 +31,14 @@ export default function Navbar() {
       to  : "/report",
     },
     {
-      name : "Contact",
-      to  : "/contact",
-    },
-  ]
-
-  if(user && user.role?.toLowerCase() === "staff"){
-    navElements.push({
       name : "Requests",
       to  : "/requests",
-    })
-  }
+    },
+    {
+      name : "Contact",
+      to  : "/contact",
+    }
+  ]
 
   return (
     <nav className="bg-gray-900 text-white shadow-lg">

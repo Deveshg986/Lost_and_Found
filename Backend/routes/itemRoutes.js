@@ -11,13 +11,15 @@
     getPendingItems,
     rejectItem,
     approveItem,
-    addItemStaff
+    addItemStaff,
+    searchItems
   } = require("../controllers/itemController");
   const upload = require("../config/multer");
 
   //These Are all of the Student API
   router.post("/report", verifyToken, upload.single("image"), addItem);
   router.get("/pending", verifyToken, getPendingItems);
+  router.get("/search", searchItems);
   router.get("/", verifyToken, allItems);
   
   //These Are all of the Staff API 

@@ -143,6 +143,47 @@ const approveItem = (req, res) => {
         });
     });
 };
+const searchItems = (req, res) => {
+    const { search, status, location, sort } = req.query;
+
+    let query = "SELECT * FROM items WHERE 1=1";
+    let params = [];
+
+    if (search) {
+        query += " AND (title LIKE ? OR description LIKE ?)";
+        params.push(`%${search}%`, `%${search}%`);
+    }
+
+    if (status) {
+        query += " AND status = ?";
+        params.push(status);
+    }
+
+    if (location) {
+        query += " AND location LIKE ?";
+        params.push(`%${location}%`);
+    }
+
+    if (sort === "latest") {
+        query += " ORDER BY created_at DESC";
+    } else if (sort === "oldest") {
+        query += " ORDER BY created_at ASC";
+    } else {
+        query += " ORDER BY id DESC";
+    }
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: "Database Error" });
+        }
+
+        return res.status(200).json({
+            count: results.length,
+            items: results
+        });
+    });
+};
 module.exports = {
     addItem,
     allItems,
@@ -151,5 +192,6 @@ module.exports = {
     rejectItem,
     approveItem,
     addItemStaff,
-    insertItem
+    insertItem,
+    searchItems
 };
