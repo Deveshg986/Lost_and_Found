@@ -1,87 +1,100 @@
-const { response } = require("express");
 const db = require("../config/db");
-
-const addItem = (req, res) => {
-
-    const { title, description, location, uploaded_by } = req.body;
-
+//Common Reoprt Controller For Both STUDENT and STAFF with Different Logic
+const insertItem = (req, res, status) => {
+    const { title, description, location } = req.body;
+    const uploaded_by = req.user?.id;
     const image = req.file ? req.file.filename : null;
 
-    if (!title || !location || !uploaded_by) {
+    if (!uploaded_by) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const allowedStatus = ["PENDING", "APPROVED"];
+    if (!allowedStatus.includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+    }
+
+    if (!title?.trim() || !location?.trim() || !image) {
         return res.status(400).json({
-            message: "Title, Location and Uploaded By are required"
+            message: "Title, Location and Image are required"
         });
     }
 
     const sql = `
-    INSERT INTO items (title, description, location, image, status, uploaded_by)
-    VALUES (?, ?, ?, ?, 'PENDING', ?)
+        INSERT INTO items 
+        (title, description, location, image, status, uploaded_by)
+        VALUES (?, ?, ?, ?, ?, ?)
     `;
+
+    const desc = description?.trim() || null;
 
     db.query(
         sql,
-        [title, description, location, image, uploaded_by],
+        [title.trim(), desc, location.trim(), image, status, uploaded_by],
         (err, result) => {
-
             if (err) {
                 console.error("Database Error:", err);
                 return res.status(500).json({ message: "Database Error" });
             }
 
+            const message =
+                status === "APPROVED"
+                    ? "Item added and auto-approved"
+                    : "Item submitted for approval";
+
             return res.status(201).json({
-                message: "Item Reported Successfully",
+                message,
                 itemId: result.insertId
             });
         }
     );
 };
-
+//Here the Common Controller use via STUDENT and STAFF with There Default status
+const addItem = (req, res) => insertItem(req, res, "PENDING");
+const addItemStaff = (req, res) => insertItem(req, res, "APPROVED");
+//This is For Both the STUDENT and STAFF to See Approved Items
 const allItems = (req, res) => {
-
     const sql = "SELECT * FROM items WHERE status = 'APPROVED'";
-    db.query(sql, (err, results) => {
 
+    db.query(sql, (err, results) => {
         if (err) {
-            console.error("Database Error:", err);
-            return res.status(500).json({
-                message: "Database Error"
-            });
+            return res.status(500).json({ message: "Database Error" });
         }
+
         return res.status(200).json({
             count: results.length,
             items: results
         });
     });
-
 };
+//By This Staff Will Get All the Report With Status = PENDING
+const getPendingItems= (req, res) => {
+    const sql = "SELECT * FROM items WHERE status = 'PENDING'";
 
-const deleteItems = (req, res) => {
-    const itemID = req.params.id;
-
-    if (!itemID || isNaN(itemID)) {
-        return res.status(400).json({
-            message: "Invalid Item ID"
-        });
-    }
-
-    const sql = `
-    UPDATE items 
-    SET status = 'DELETED' 
-    WHERE id = ? AND claimed_by IS NULL
-    `;
-
-    db.query(sql, [itemID], (err, result) => {
+    db.query(sql, (err, results) => {
         if (err) {
-            return res.status(500).json({
-                message: "Server Error",
-                error: err.message
-            });
+            return res.status(500).json({ message: "Database Error" });
         }
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                message: "Item not found or already claimed"
-            });
+        return res.status(200).json({
+            count: results.length,
+            items: results
+        });
+    });
+};
+//This Controller Set Item Status DELETED For Soft Delete
+const deleteItems = (req, res) => {
+    const { id } = req.params;
+
+    const sql = `
+        UPDATE items 
+        SET status = 'DELETED' 
+        WHERE id = ?
+    `;
+
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "Database Error" });
         }
 
         return res.status(200).json({
@@ -89,73 +102,53 @@ const deleteItems = (req, res) => {
         });
     });
 };
+//This is Reject Controller For Staff To Reject Report
+const rejectItem = (req, res) => {
+    const { id } = req.params;
 
-const getPendingItem = (req, res)=>{
-    const sql = "SELECT * FROM items WHERE status = 'PENDING'";
-    db.query(sql, (err, results)=>{
-        if (err) {
-            console.error("Database Error:", err);
-            return res.status(500).json({
-                message: "Database Error"
-            });
-        }
-        return res.status(200).json({
-            count: results.length,
-            items: results
-        });       
-    })
-}
-
-const rejectItem = (req, res)=>{
-    const {id}= req.params;
     const sql = `
         UPDATE items 
         SET status = 'REJECTED' 
-        WHERE id = ? AND status = 'PENDING' 
+        WHERE id = ? AND status = 'PENDING'
     `;
 
-    db.query(sql, [id], (err, result)=>{
-        if(err){
-            return res.status(500).json({
-                message: "Database Error"
-            })
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "Database Error" });
         }
 
-        if(result.affectedRows===0){
-            return res.status(404).json({
-                message: "Item not found or already approved/rejected"
-            })
-        }
         return res.status(200).json({
-            message: "Item rejected successfully"
+            message: "Item Rejected Successfully"
         });
-    })
-}
+    });
+};
+//This is Approve Controller For Staff To Approve Report
+const approveItem = (req, res) => {
+    const { id } = req.params;
 
-const approveItem = (req, res)=>{
-    const {id}= req.params;
     const sql = `
         UPDATE items 
         SET status = 'APPROVED' 
-        WHERE id = ? AND status = 'PENDING' 
+        WHERE id = ? AND status = 'PENDING'
     `;
 
-    db.query(sql, [id], (err, result)=>{
-        if(err){
-            return res.status(500).json({
-                message: "Database Error"
-            })
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "Database Error" });
         }
 
-        if(result.affectedRows===0){
-            return res.status(404).json({
-                message: "Item not found or already approved/rejected"
-            })
-        }
         return res.status(200).json({
-            message: "Item Approved successfully"
+            message: "Item Approved Successfully"
         });
-    })
-}
-
-module.exports = {addItem, allItems, getPendingItem ,deleteItems, rejectItem, approveItem}
+    });
+};
+module.exports = {
+    addItem,
+    allItems,
+    getPendingItems,
+    deleteItems,
+    rejectItem,
+    approveItem,
+    addItemStaff,
+    insertItem
+};
