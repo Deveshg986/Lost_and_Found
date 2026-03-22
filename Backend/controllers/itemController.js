@@ -68,7 +68,7 @@ const allItems = (req, res) => {
     });
 };
 //By This Staff Will Get All the Report With Status = PENDING
-const getPendingItem = (req, res) => {
+const getPendingItems= (req, res) => {
     const sql = "SELECT * FROM items WHERE status = 'PENDING'";
 
     db.query(sql, (err, results) => {
@@ -145,7 +145,7 @@ const approveItem = (req, res) => {
 module.exports = {
     addItem,
     allItems,
-    getPendingItem,
+    getPendingItems,
     deleteItems,
     rejectItem,
     approveItem,

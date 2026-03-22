@@ -8,7 +8,7 @@
     addItem,
     allItems,
     deleteItems,
-    getPendingItem,
+    getPendingItems,
     rejectItem,
     approveItem,
     addItemStaff
@@ -17,11 +17,12 @@
 
   //These Are all of the Student API
   router.post("/report", verifyToken, upload.single("image"), addItem);
+  router.get("/pending", verifyToken, getPendingItems);
   router.get("/", verifyToken, allItems);
   
   //These Are all of the Staff API 
   router.post("/staff/report", verifyToken, isStaff,   upload.single("image"), addItemStaff)
-  router.get("/pending", verifyToken, isStaff, getPendingItem);
+  router.get("/pending", verifyToken, isStaff, getPendingItems);
   router.put("/:id/approve", verifyToken, isStaff, approveItem);
   router.put("/:id/reject", verifyToken, isStaff, rejectItem);
   router.delete("/:id", verifyToken, isStaff, deleteItems);
