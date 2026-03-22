@@ -1,3 +1,4 @@
+const { response } = require("express");
 const db = require("../config/db");
 //Common Reoprt Controller For Both STUDENT and STAFF with Different Logic
 const insertItem = (req, res, status) => {
@@ -21,7 +22,7 @@ const insertItem = (req, res, status) => {
     }
 
     const sql = `
-        INSERT INTO items 
+        INSERT INTO items
         (title, description, location, image, status, uploaded_by)
         VALUES (?, ?, ?, ?, ?, ?)
     `;

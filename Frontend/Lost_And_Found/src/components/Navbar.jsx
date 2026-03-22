@@ -56,6 +56,7 @@ export default function Navbar() {
         </div>
 
         {/* Navigation Links */}
+
         <div className="hidden md:flex gap-8 font-medium ">
           {
             navElements.map( (element ) => {
