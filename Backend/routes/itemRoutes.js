@@ -12,7 +12,8 @@
     rejectItem,
     approveItem,
     addItemStaff,
-    searchItems
+    searchItems,
+    getStaff
   } = require("../controllers/itemController");
   const upload = require("../config/multer");
 
@@ -21,6 +22,7 @@
   router.get("/pending", verifyToken, getPendingItems);
   router.get("/search", searchItems);
   router.get("/", verifyToken, allItems);
+  router.get("/staff", verifyToken, getStaff)//Use this API to Show the Dropdown of Staff List
   
   //These Are all of the Staff API 
   router.post("/staff/report", verifyToken, isStaff,   upload.single("image"), addItemStaff)

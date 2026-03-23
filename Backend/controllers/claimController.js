@@ -72,7 +72,7 @@ const updateClaimStatus = (req, res) => {
       message: "Invalid status"
     });
   }
-  const getClaimQuery = `SELECT item_id FROM claims WHERE id = ?`;
+  const getClaimQuery = `SELECT item_id, status FROM claims WHERE id = ?`;
 
   db.query(getClaimQuery, [claimId], (err, result) => {
     if (err) return res.status(500).json({ message: "Database error" });
@@ -82,43 +82,68 @@ const updateClaimStatus = (req, res) => {
         message: "Claim Not Found"
       });
     }
-
+    if(result[0].status !== "PENDING"){
+      return res.status(400).json({
+        message:"Claim already processed"
+      })
+    }
     const itemId = result[0].item_id;
-
     //Update the Status by staff 
-    const updateClaimQuery = `UPDATE claims SET status = ? WHERE id = ?`;
+    const checkStaffQuery = `SELECT submitted_to FROM items WHERE id = ?`;
 
-    db.query(updateClaimQuery, [status, claimId], (err) => {
+    db.query(checkStaffQuery, [itemId], (err, itemResult) => {
+      if (err) return res.status(500).json({ message: "Error checking staff" });
+      if(!itemResult || itemResult.length === 0){
+        return res.status(404).json({
+          message:"Item not Found"
+        })
+      }
+      if (Number(itemResult[0].submitted_to) !== Number(req.user.id)) {
+        return res.status(403).json({
+          message: "Only assigned staff can approve/reject this claim"
+        });
+      }
+    const updateClaimQuery = `
+    UPDATE claims 
+    SET status = ?, 
+            approved_by = ?, 
+            approved_at = NOW()
+    WHERE id = ?
+    AND status = 'PENDING'
+      `;
+
+    db.query(updateClaimQuery, [status,req.user.id, claimId], (err) => {
       if (err) return res.status(500).json({ message: "Error Updating Status" });
 
-      //If Staff APPROVE the Claim
-      if (status === "APPROVED") {
+          //If Staff APPROVE the Claim
+          if (status === "APPROVED") {
 
-        //Update item status
-        const updateItemQuery = `UPDATE items SET status = 'CLAIMED' WHERE id = ?`;
+            //Update item status
+            const updateItemQuery = `UPDATE items SET status = 'CLAIMED' WHERE id = ?`;
 
-        db.query(updateItemQuery, [itemId], (err) => {
-          if (err) return res.status(500).json({ message: "Error Updating Item" });
+            db.query(updateItemQuery, [itemId], (err) => {
+              if (err) return res.status(500).json({ message: "Error Updating Item" });
 
-          //The claim which is Approved by staff Reject other Automatically
-          const rejectOtherClaims = `
-            UPDATE claims 
-            SET status = 'REJECTED' 
-            WHERE item_id = ? AND id != ?
-          `;
+              //The claim which is Approved by staff Reject other Automatically
+              const rejectOtherClaims = `
+                UPDATE claims 
+                SET status = 'REJECTED' 
+                WHERE item_id = ? AND id != ?
+              `;
 
-          db.query(rejectOtherClaims, [itemId, claimId], (err) => {
-            if (err) return res.status(500).json({ message: "Error rejecting others" });
+              db.query(rejectOtherClaims, [itemId, claimId], (err) => {
+                if (err) return res.status(500).json({ message: "Error rejecting others" });
 
-            return res.json({ message: "Claim approved successfully" });
-          });
+                return res.json({ message: "Claim approved successfully" });
+              });
+            });
+
+          } else {
+            // if Staff Reject the Claim
+            return res.json({ message: "Claim rejected successfully" });
+          }
         });
-
-      } else {
-        // if Staff Reject the Claim
-        return res.json({ message: "Claim rejected successfully" });
-      }
-    });
+      });
   });
 };
 
@@ -129,11 +154,11 @@ const getAllClaims = (req, res) => {
       c.message,
       c.status AS claim_status,
       c.created_at,
+      c.approved_at
 
       u.id AS user_id,
       u.full_name AS user_name,
       u.email,
-      u.role,
 
       i.id AS item_id,
       i.title AS item_title,
@@ -146,10 +171,11 @@ const getAllClaims = (req, res) => {
 
     INNER JOIN users u ON c.user_id = u.id
     INNER JOIN items i ON c.item_id = i.id
-
+    LEFT JOIN users s ON c.approved_by = s.id
     WHERE 
       c.status = 'PENDING'
       AND i.status = 'APPROVED'
+      AND i.submitted_to = ?
 
     ORDER BY c.created_at DESC
     LIMIT 50

@@ -2,7 +2,7 @@ const { response } = require("express");
 const db = require("../config/db");
 //Common Reoprt Controller For Both STUDENT and STAFF with Different Logic
 const insertItem = (req, res, status) => {
-    const { title, description, location } = req.body;
+    const { title, description, location, submitted_to} = req.body;
     const uploaded_by = req.user?.id;
     const image = req.file ? req.file.filename : null;
 
@@ -20,18 +20,22 @@ const insertItem = (req, res, status) => {
             message: "Title, Location and Image are required"
         });
     }
-
+    if(!submitted_to){
+        return res.status(400).json({
+            message:"Staff selection is required"
+        })
+    }
     const sql = `
         INSERT INTO items
-        (title, description, location, image, status, uploaded_by)
-        VALUES (?, ?, ?, ?, ?, ?)
+        (title, description, location, image, status, uploaded_by, submitted_to)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
     const desc = description?.trim() || null;
 
     db.query(
         sql,
-        [title.trim(), desc, location.trim(), image, status, uploaded_by],
+        [title.trim(), desc, location.trim(), image, status, uploaded_by, submitted_to],
         (err, result) => {
             if (err) {
                 console.error("Database Error:", err);
@@ -184,6 +188,26 @@ const searchItems = (req, res) => {
         });
     });
 };
+const getStaff = (req, res) => {
+  const sql = `
+    SELECT id, name, department 
+    FROM users 
+    WHERE role = 'staff'
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Error fetching staff"
+      });
+    }
+
+    return res.status(200).json({
+      count: result.length,
+      staff: result
+    });
+  });
+};
 module.exports = {
     addItem,
     allItems,
@@ -193,5 +217,6 @@ module.exports = {
     approveItem,
     addItemStaff,
     insertItem,
-    searchItems
+    searchItems,
+    getStaff
 };
