@@ -1,37 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { ItemCard, LoadingCard } from "../components";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { searchItems } from "../items/itemsSlice";
+
+
 
 function Home() {
+  const dispatch = useDispatch();
+  const { visibleItems = [], loading, error } = useSelector((state) => state.items);
+  const {userData} = useSelector((state)=>state.auth);
+  const [searchVal, setSearchval] = useState("");
 
-  const [user] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-  const [items, setItems] = useState([]);
-  const [filter, setFilter] = useState("unclaimed"); //filter for browsing items(claimed or unclaimed)
-  const [searchVal, setSearchVal] = useState("");
-  function  handleChange(e){
-    setFilter(e.target.value);
-  };
-  function  handleSearch(e){
-    setSearchVal(e.target.value);
-  };
-
-  useEffect(() => {
-    axios.get("http://localhost:5000/api/items",{
-      headers:{
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }}
-    )
-      .then((res) => {
-        setItems(res.data.items);
-      })
-      .catch((err) => {
-        console.error("Error fetching items:", err);
-      });
-  }, [filter, searchVal]);
+  const [status, setStatus] = useState("");
   
+useEffect(() => {
+  dispatch(searchItems({ status, search: searchVal }));
+}, [ ]);
+
+  if(loading) return <LoadingCard/>
+  if(error) return <p>{error}</p>
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
@@ -40,7 +27,7 @@ function Home() {
 
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between px-4 py-3 gap-3">
           
-          <h1 className="text-lg font-semibold text-gray-800">Welcome {user?.full_name}
+          <h1 className="text-lg font-semibold text-gray-800">Welcome {userData?.full_name}
           </h1>
 
           <div className="flex w-full md:w-auto gap-2 items-center">
@@ -50,13 +37,23 @@ function Home() {
               name="title"
               placeholder="Search here"
               className="w-full p-2 ring-2 focus:outline-none focus:ring-2 focus:ring-gray-900"
-              
-              onChange={handleSearch}
+              onChange={(e)=>setSearchval(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    dispatch(searchItems(buildFilters()));
+                  }
+                }}
               required
             />
-            <select onChange={handleChange} name="dataFilter" value={filter} className=" py-2 font-medium transition-all duration-300 transform mr-4 focus:outline-none focus:ring-0">
-            <option value="claimed">Claimed</option>
-            <option value="unclaimed">UnClaimed</option>
+            <button
+              disabled={loading}
+              onClick={() => dispatch(searchItems({ status, search: searchVal }))}>
+              🔍
+            </button>
+            <select onChange={(e)=>setStatus(e.target.value)} value={status}>
+              <option value="">All</option>
+              <option value="CLAIMED">Claimed</option>
+              <option value="APPROVED">Unclaimed</option>
             </select>
           </div>
         </div>
@@ -64,9 +61,11 @@ function Home() {
 
       
         {
-          items ?
-          (<ItemCard items={items} filter={filter} searchVal={searchVal} />) :
-          (<LoadingCard/>)
+            !loading && visibleItems.length === 0 ? (
+              <p>No items found</p>
+                ) : (
+              <ItemCard items={visibleItems} searchVal={searchVal} />
+            )
         }
       
   </div>

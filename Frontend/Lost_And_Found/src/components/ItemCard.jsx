@@ -1,5 +1,4 @@
 import axios from "axios";
-
 import React, { useState } from "react";
 
 const ItemCard = ({ items }) => {
@@ -13,7 +12,6 @@ const ItemCard = ({ items }) => {
   const updateStatus = async (id, status) => {
     try {
       const token = localStorage.getItem("token");
-
       let url = "";
       let method = "put";
 
@@ -79,6 +77,10 @@ const ItemCard = ({ items }) => {
                 <p>
                   <span className="font-medium text-gray-700">📍</span>{" "}
                   {item.location}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700"></span>{" "}
+                  {item.uploaded_by}
                 </p>
                 <p>
                   <span className="font-medium text-gray-700">📅</span>{" "}

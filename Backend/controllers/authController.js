@@ -4,7 +4,7 @@ const { json } = require("express");
 const jwt = require("jsonwebtoken");
 
 exports.login = (req, res) => {
-
+    console.log(req.body);
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -33,8 +33,8 @@ exports.login = (req, res) => {
         const user = results[0];
 
         // Compare password
-        const match = await bcrypt.compare(password, user.password);
-        // const match = results[0].password === password;//remove when pushing code
+        //const match = await bcrypt.compare(password, user.password);
+        const match = results[0].password === password;//remove when pushing code
 
         if (!match) {
             return res.status(401).json({

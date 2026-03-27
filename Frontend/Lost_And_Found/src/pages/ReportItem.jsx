@@ -8,7 +8,8 @@ export default function ReportItem() {
     title: "",
     description: "",
     location: "",
-    image: null
+    image: null,
+    submitted_to : 1,
   });
 
   const handleChange = (e) => {
@@ -27,6 +28,13 @@ export default function ReportItem() {
     });
   };
 
+  const handleSelectChange = (e) => {
+    setReport({
+      ...report,
+      submitted_to: e.target.value
+    })
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -38,11 +46,12 @@ export default function ReportItem() {
       formData.append("title", report.title);
       formData.append("description", report.description);
       formData.append("location", report.location);
-      // formData.append("uploaded_by", user?.id); //Again For Security Purpose
+      //formData.append("uploaded_by", user?.id); //Ignored by backend anyways //Again For Security Purpose
       formData.append("image", report.image);
+      formData.append("submitted_to", report.submitted_to);
 
       //Fix The Code For Security Pupose Status Should change in Backend based on role not from Frontend
-      const url = 
+      const url =
       user?.role?.toLowerCase() === "staff"
       ? "http://localhost:5000/api/items/staff/report"
       : "http://localhost:5000/api/items/report"
@@ -52,7 +61,6 @@ export default function ReportItem() {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`
 
           }
@@ -65,7 +73,8 @@ export default function ReportItem() {
         title: "",
         description: "",
         location: "",
-        image: null
+        image: null,
+        submitted_to: 1,
       });
 
       if (fileInputRef.current) {
@@ -146,6 +155,23 @@ export default function ReportItem() {
               className="w-full border rounded-lg"
             />
           </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Submitted to 
+            </label>
+            <select
+              onChange={handleSelectChange}
+              value={report.submitted_to}
+              required
+              className="w-full border rounded-lg"
+            >
+            <option value={1}>cse</option>
+            <option value={1}>ce</option>
+            <option value={1}>ee</option>
+            <option value={1}>me</option>
+            </select>
+          </div>
+
 
           <button
             type="submit"
