@@ -90,7 +90,7 @@ const ItemCard = ({ items, requests }) => {
           </div>
 
           {/* Content */}
-          <div className="p-4 flex flex-col justify-between h-[220px]">
+          <div className="p-4 flex flex-col justify-between flex-grow">
             <div>
               <h3 className="text-lg font-semibold text-gray-800 truncate">
                 {item.title}
