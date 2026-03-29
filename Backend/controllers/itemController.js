@@ -150,7 +150,7 @@ const approveItem = (req, res) => {
 const searchItems = (req, res) => {
     const { search, status, location, sort } = req.query;
 
-    let query = "SELECT * FROM items WHERE 1=1";
+    let query = "SELECT * FROM items WHERE status IN ('APPROVED', 'CLAIMED',)"; // coz home has claimed + approved(unclaimed) items
     let params = [];
 
     if (search) {
