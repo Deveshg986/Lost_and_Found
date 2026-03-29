@@ -2,7 +2,7 @@ import {ItemCard, LoadingCard} from "../components";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { filterByStatus, getAllItems } from "../items/itemsSlice";
+import { filterByStatus, getAllItems, getPendingItems } from "../items/itemsSlice";
 
 
 export default function Requests(){
@@ -17,14 +17,7 @@ export default function Requests(){
     if(userData.role.trim().toLowerCase() === "student"){
       
     }else{
-      if(allItems.length === 0){
-        dispatch(getAllItems())
-        .then(()=>{
-            dispatch(filterByStatus("PENDING"));
-          });
-      }else{
-        dispatch(filterByStatus("PENDING"));
-      }
+      dispatch(getPendingItems());
     }
   },[userData, dispatch, allItems.length]);
 

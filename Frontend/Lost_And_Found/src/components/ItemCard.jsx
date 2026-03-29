@@ -1,33 +1,34 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import { createClaimAPI } from "../claims/claimsAPI";
-import API  from "../utils/axiosInstance";
-
+import API from "../utils/axiosInstance";
 
 const ItemCard = ({ items, requests }) => {
-  const {userData} = useSelector(state=>state.auth);
+  const { userData } = useSelector(state => state.auth);
 
   const [loadingId, setLoadingId] = useState(null);
-  const handleClaim = async(itemId)=>{
+  const [claimedIds, setClaimedIds] = useState(new Set()); // track locally claimed items
+
+  const handleClaim = async (itemId) => {
     const message = window.prompt("Enter Message");
-    if(!message) return;
+    if (!message) return;
 
     try {
       setLoadingId(itemId);
       const data = await createClaimAPI(itemId, message);
-      alert(data.message || "Claim Submitted Succesfully!!");
-      window.location.reload();
+      alert(data.message || "Claim Submitted Successfully!");
+      // Mark this item as claimed locally so the button disappears immediately.
+      // The item's DB status stays APPROVED until staff approves the claim.
+      setClaimedIds((prev) => new Set(prev).add(itemId));
     } catch (error) {
       console.error(error);
-
       const errMsg = error.response?.data?.message || "Error Claiming Item";
       alert(errMsg);
-    }finally{
-      setLoadingId(null);  //turn off loading
+    } finally {
+      setLoadingId(null);
     }
-  }
+  };
 
   const baseURL = "http://localhost:5000/api/items/";
 
@@ -69,7 +70,7 @@ const ItemCard = ({ items, requests }) => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((item) => (
-        
+
         (<div
           key={item.id}
           className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
@@ -84,7 +85,7 @@ const ItemCard = ({ items, requests }) => {
 
             {/* Status badge */}
             <span className="absolute top-3 right-3 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium shadow-sm">
-              {item.status}
+              {claimedIds.has(item.id) ? "Requested Claim" : item.status}
             </span>
           </div>
 
@@ -105,7 +106,7 @@ const ItemCard = ({ items, requests }) => {
                   {item.location}
                 </p>
                 <p>
-                  <span className="font-medium text-gray-700"></span>{" "}
+                  <span className="font-medium text-gray-700">Reported by: </span>{" "}
                   {item.uploaded_by}
                 </p>
                 <p>
@@ -118,11 +119,11 @@ const ItemCard = ({ items, requests }) => {
             {/* Actions */}
             <div className="mt-4 flex flex-col gap-2">
 
-              {/* Claim only for approved */}
-              {item.status === "APPROVED" && (
+              {/* Claim only for approved items the student hasn't claimed yet */}
+              {item.status === "APPROVED" && !claimedIds.has(item.id) && (
                 <button className="w-full bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
-                onClick={()=> handleClaim(item.id)}
-                disabled={loadingId === item.id}
+                  onClick={() => handleClaim(item.id)}
+                  disabled={loadingId === item.id}
                 >
                   {loadingId === item.id ? "Claiming..." : "Claim Item"}
                 </button>

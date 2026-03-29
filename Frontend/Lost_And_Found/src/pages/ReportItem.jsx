@@ -5,11 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 export default function ReportItem() {
   
-  const isLoggedin = useSelector(state=>state.auth.isLoggedin);
-  if(!isLoggedin){
-    return <Navigate to={'/'} replace/>
-  }
-
+  const isLoggedin = useSelector(state=>state.auth.isLoggedin)
 
   const fileInputRef = useRef(null);
 
@@ -96,6 +92,9 @@ export default function ReportItem() {
     }
   };
 
+  if(!isLoggedin){
+    return <Navigate to={'/'} replace/>
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">

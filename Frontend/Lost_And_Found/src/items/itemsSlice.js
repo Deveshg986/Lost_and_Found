@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllItemsAPI, searchItemsAPI, getUserPostsAPI } from "./itemsAPI";
+import { getAllItemsAPI, searchItemsAPI, getUserPostsAPI, getPendingItemsAPI } from "./itemsAPI";
 
 // 1. Fetch ALL items once
 export const getAllItems = createAsyncThunk(
@@ -39,6 +39,19 @@ export const getUserPosts = createAsyncThunk(
     }
   }
 );
+
+// 4. Pending items (for staff dashboard)
+export const getPendingItems = createAsyncThunk(
+  "/items/pending",
+  async (_, thunkAPI) => {
+    try {
+      const res = await getPendingItemsAPI();
+      return res?.data?.items;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.data.message);
+    }
+  }
+)
 
 const itemsSlice = createSlice({
   name: "items",
@@ -106,6 +119,19 @@ const itemsSlice = createSlice({
         state.visibleItems = action.payload;
       })
       .addCase(getUserPosts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // PENDING ITEMS (for staff) (overrides visible items ONLY)
+      .addCase(getPendingItems.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getPendingItems.fulfilled, (state, action) => {
+        state.loading = false;
+        state.visibleItems = action.payload;
+      })
+      .addCase(getPendingItems.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
