@@ -1,0 +1,3 @@
+modified db : claims table => approved_by can be null.....
+modified itemcontroller : fetch items with status: pending, approved, claimed
+bug: after claiming item, page still shows that item

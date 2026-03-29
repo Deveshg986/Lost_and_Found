@@ -59,7 +59,7 @@ const addItem = (req, res) => insertItem(req, res, "PENDING");
 const addItemStaff = (req, res) => insertItem(req, res, "APPROVED");
 //This is For Both the STUDENT and STAFF to See Approved Items
 const allItems = (req, res) => {
-    const sql = "SELECT * FROM items WHERE status = 'APPROVED'";
+    const sql = "SELECT * FROM items WHERE status IN ('APPROVED', 'CLAIMED', 'PENDING')";//Just for testing
 
     db.query(sql, (err, results) => {
         if (err) {

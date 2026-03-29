@@ -38,8 +38,8 @@ const claimItem = (req, res) => {
       }
 
       const insertQuery = `
-        INSERT INTO claims (item_id, user_id, message)
-        VALUES (?, ?, ?)
+        INSERT INTO claims (item_id, user_id, message, approved_by)
+        VALUES (?, ?, ?, NULL)
       `;
 
       db.query(insertQuery, [item_id, userId, message || null], (err, result) => {
@@ -154,7 +154,7 @@ const getAllClaims = (req, res) => {
       c.message,
       c.status AS claim_status,
       c.created_at,
-      c.approved_at
+      c.approved_at,
 
       u.id AS user_id,
       u.full_name AS user_name,
@@ -181,7 +181,7 @@ const getAllClaims = (req, res) => {
     LIMIT 50
   `;
 
-  db.query(allClaims, (err, results) => {
+  db.query(allClaims, [req.user.id], (err, results) => {
     if (err) {
       return res.status(500).json({ message: "Database Error" });
     }

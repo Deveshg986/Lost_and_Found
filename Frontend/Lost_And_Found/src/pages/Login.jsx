@@ -1,13 +1,20 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authSlice";
 
 function Login() {
+  const navigate = useNavigate();
+  const isLoggedin = useSelector(state=>state.auth.isLoggedin);
+  if(!isLoggedin){
+    <Navigate to='' replace/>
+  }else{
+    <Navigate to='/home' replace/>
+  }
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
@@ -59,6 +66,7 @@ function Login() {
             placeholder="Enter Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            
             required
             className="w-full px-4 py-2 border rounded-lg"
           />

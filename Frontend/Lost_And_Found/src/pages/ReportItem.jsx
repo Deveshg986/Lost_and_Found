@@ -1,7 +1,16 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
+import { Navigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function ReportItem() {
+  
+  const isLoggedin = useSelector(state=>state.auth.isLoggedin);
+  if(!isLoggedin){
+    return <Navigate to={'/'} replace/>
+  }
+
+
   const fileInputRef = useRef(null);
 
   const [report, setReport] = useState({
@@ -49,7 +58,7 @@ export default function ReportItem() {
       //formData.append("uploaded_by", user?.id); //Ignored by backend anyways //Again For Security Purpose
       formData.append("image", report.image);
       formData.append("submitted_to", report.submitted_to);
-
+      console.log(user.role);
       //Fix The Code For Security Pupose Status Should change in Backend based on role not from Frontend
       const url =
       user?.role?.toLowerCase() === "staff"
@@ -122,7 +131,7 @@ export default function ReportItem() {
               rows={4}
               value={report.description}
               onChange={handleChange}
-              required
+              //no need to be mandatory..other info is enough
               className="w-full px-4 py-2 border rounded-lg"
             />
           </div>

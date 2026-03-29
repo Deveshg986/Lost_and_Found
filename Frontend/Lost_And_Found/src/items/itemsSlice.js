@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllItemsAPI, searchItemsAPI } from "./itemsAPI";
+import { getAllItemsAPI, searchItemsAPI, getUserPostsAPI } from "./itemsAPI";
 
 // 1. Fetch ALL items once
 export const getAllItems = createAsyncThunk(
@@ -23,6 +23,19 @@ export const searchItems = createAsyncThunk(
       return res.data.items;
     } catch (err) {
       return thunkAPI.rejectWithValue("Search failed");
+    }
+  }
+);
+
+// 3. User Posts
+export const getUserPosts = createAsyncThunk(
+  "items/getUserPosts",
+  async (_, thunkAPI) => {
+    try {
+      const res = await getUserPostsAPI();
+      return res.data.items;
+    } catch (err) {
+      return thunkAPI.rejectWithValue("Failed to fetch user posts");
     }
   }
 );
@@ -54,6 +67,7 @@ const itemsSlice = createSlice({
       state.visibleItems = state.allItems;
     },
   },
+  
   extraReducers: (builder) => {
     builder
       // GET ALL
@@ -79,6 +93,19 @@ const itemsSlice = createSlice({
         state.visibleItems = action.payload;
       })
       .addCase(searchItems.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // USER POSTS (overrides visible items ONLY)
+      .addCase(getUserPosts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUserPosts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.visibleItems = action.payload;
+      })
+      .addCase(getUserPosts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

@@ -18,7 +18,7 @@ export default function Navbar() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     dispatch(logout());
-    navigate("/");
+    navigate("/", { replace: true});
   };
 
   const navElements = [
@@ -35,9 +35,13 @@ export default function Navbar() {
       to  : "/requests",
     },
     {
-      name : "Contact",
-      to  : "/contact",
-    }
+      name : "Claims",
+      to  : "/claim-requests",
+    },
+    {
+      name : "My posts",
+      to : "my-posts",
+    },
   ]
 
   return (
@@ -77,7 +81,7 @@ export default function Navbar() {
               onClick={handleLogout}
               className="px-3 py-2 font-medium transition-all duration-300 transform text-amber-50 hover:text-indigo-300 hover:scale-110"
               >
-              LogOut
+              <i className="fa-solid fa-right-from-bracket"></i>
             </button>
           : null}
 

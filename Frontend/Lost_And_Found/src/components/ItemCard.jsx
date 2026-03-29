@@ -1,16 +1,39 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-const ItemCard = ({ items }) => {
-  const [user] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+import { createClaimAPI } from "../claims/claimsAPI";
+import API  from "../utils/axiosInstance";
+
+
+const ItemCard = ({ items, requests }) => {
+  const {userData} = useSelector(state=>state.auth);
+
+  const [loadingId, setLoadingId] = useState(null);
+  const handleClaim = async(itemId)=>{
+    const message = window.prompt("Enter Message");
+    if(!message) return;
+
+    try {
+      setLoadingId(itemId);
+      const data = await createClaimAPI(itemId, message);
+      alert(data.message || "Claim Submitted Succesfully!!");
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+
+      const errMsg = error.response?.data?.message || "Error Claiming Item";
+      alert(errMsg);
+    }finally{
+      setLoadingId(null);  //turn off loading
+    }
+  }
 
   const baseURL = "http://localhost:5000/api/items/";
 
   const updateStatus = async (id, status) => {
     try {
+      setLoadingId(id);
       const token = localStorage.getItem("token");
       let url = "";
       let method = "put";
@@ -37,14 +60,17 @@ const ItemCard = ({ items }) => {
 
     } catch (err) {
       console.log(err);
-      alert("Error updating status");
+      alert("Error updating status: " + (err?.response?.data?.message || "Try again"));
+    } finally {
+      setLoadingId(null);
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((item) => (
-        <div
+        
+        (<div
           key={item.id}
           className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
         >
@@ -94,43 +120,49 @@ const ItemCard = ({ items }) => {
 
               {/* Claim only for approved */}
               {item.status === "APPROVED" && (
-                <button className="w-full bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium">
-                  Claim Item
+                <button className="w-full bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                onClick={()=> handleClaim(item.id)}
+                disabled={loadingId === item.id}
+                >
+                  {loadingId === item.id ? "Claiming..." : "Claim Item"}
                 </button>
               )}
 
               {/* Staff controls */}
-              {user?.role?.trim().toLowerCase() === "staff" && item.status === "PENDING" && (
+              {userData?.role?.trim().toLowerCase() === "staff" && item.status === "PENDING" && (
                 <>
                   <button
                     onClick={() => updateStatus(item.id, "APPROVED")}
                     className="w-full bg-green-500 hover:bg-green-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                    disabled={loadingId === item.id}
                   >
-                    Approve Item
+                    {loadingId === item.id ? "Approving..." : "Approve Item"}
                   </button>
 
                   <button
                     onClick={() => updateStatus(item.id, "REJECTED")}
                     className="w-full bg-yellow-500 hover:bg-yellow-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                    disabled={loadingId === item.id}
                   >
-                    Reject Item
+                    {loadingId === item.id ? "Rejecting..." : "Reject Item"}
                   </button>
                 </>
               )}
 
               {/* Delete for staff */}
-              {user?.role?.trim().toLowerCase() === "staff" && (
+              {userData?.role?.trim().toLowerCase() === "staff" && (
                 <button
                   onClick={() => updateStatus(item.id, "DELETED")}
                   className="w-full bg-red-500 hover:bg-red-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                  disabled={loadingId === item.id}
                 >
-                  Delete Item
+                  {loadingId === item.id ? "Deleting..." : "Delete Item"}
                 </button>
               )}
 
             </div>
           </div>
-        </div>
+        </div>)
       ))}
     </div>
   );

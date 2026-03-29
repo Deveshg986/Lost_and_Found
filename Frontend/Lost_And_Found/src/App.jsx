@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import React from "react";
 import MainLayout from "./Layout/MainLayout";
 import AuthLayout from "./Layout/AuthLayout";
-import { Login,  Home,  Report,  Signup,  Requests} from "./pages"
+import { Login,  Home,  Report,  Signup,  Requests, MyPosts, Claims} from "./pages"
 
 // import Contact from "./pages/Contact";
 
@@ -19,6 +19,8 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/report" element={<Report />} />
         <Route path="/requests" element={<Requests />} />
+        <Route path="/my-posts" element={<MyPosts />} />
+        <Route path="/claim-requests" element={<Claims />} />
         {/* <Route path="/contact" element={<Contact />} /> */}
       </Route>
     </Routes>
