@@ -1,3 +1,8 @@
 modified db : claims table => approved_by can be null.....
 modified itemcontroller : fetch items with status: pending, approved, claimed
 bug: after claiming item, page still shows that item
+
+search clearing feature, to reset items after donw with searching
+feature to implement: camera access to take pictures 
+Need to improve naming of images captures using camera(within application) for scaling of application
+camera switch featue ... (front <=> back)
