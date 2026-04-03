@@ -8,9 +8,8 @@ function findItems(items, filter, searchVal){
       
     });
   }else{
-
+    
   }
-
   return items;
 }
 

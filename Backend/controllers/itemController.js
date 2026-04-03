@@ -154,8 +154,8 @@ const searchItems = (req, res) => {
     let params = [];
 
     if (search) {
-        query += " AND (title LIKE ? OR description LIKE ?)";
-        params.push(`%${search}%`, `%${search}%`);
+        query += " AND (LOWER(title) LIKE ? OR LOWER(description) LIKE ?)";
+        params.push(`%${search.toLowerCase()}%`, `%${search.toLowerCase()}%`);
     }
 
     if (status) {
@@ -164,8 +164,8 @@ const searchItems = (req, res) => {
     }
 
     if (location) {
-        query += " AND location LIKE ?";
-        params.push(`%${location}%`);
+        query += " AND LOWER(location) LIKE ?";
+        params.push(`%${location.toLowerCase()}%`);
     }
 
     if (sort === "latest") {

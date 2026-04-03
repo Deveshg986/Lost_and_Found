@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const sendMail = require("../utils/sendMail");
 const claimItem = (req, res) => {
   const { item_id, message } = req.body;
   const userId = req.user.id;
@@ -58,6 +59,14 @@ const claimItem = (req, res) => {
           message: "Claim submitted successfully",
           claimId: result.insertId
         });
+
+        const getStaffQuery = `
+          SELECT u.email, u.full_name, i.title
+          FROM users u
+          JOIN items i ON i.submitted_to = u.id
+          WHERE i.id = ?
+        `;
+        
       });
     });
   });
@@ -154,7 +163,7 @@ const getAllClaims = (req, res) => {
       c.message,
       c.status AS claim_status,
       c.created_at,
-      c.approved_at
+      c.approved_at,
 
       u.id AS user_id,
       u.full_name AS user_name,

@@ -3,7 +3,6 @@ import { ItemCard, LoadingCard } from "../components";
 import axios from "axios";
 
 function Home() {
-
   const [user] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
@@ -19,18 +18,39 @@ function Home() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/items",{
-      headers:{
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }}
-    )
-      .then((res) => {
-        setItems(res.data.items);
-      })
-      .catch((err) => {
-        console.error("Error fetching items:", err);
+    const fetchItem= async()=>{
+      try{
+        const token = localStorage.getItem("token");
+        let query = " "
+        if (searchVal || filter){
+             query ="http://localhost:5000/api/items/search?"
+        }else{
+          query="http://localhost:5000/api/items"
+        }
+      if(searchVal){
+        query+= `search=${encodeURIComponent(searchVal)}&`;
+      }
+      if(filter){
+        if (filter === "claimed") {
+            query += `status=CLAIMED`;
+          }
+        if (filter === "unclaimed") {
+            query += `status=APPROVED`;
+          }
+      }
+      const res = await axios.get(query, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
-  }, [filter, searchVal]);
+
+      setItems(res.data.items);
+    }catch(err){
+      console.log("Error While Fetching Item", err);
+    }
+    };
+    fetchItem()
+}, [filter, searchVal]);
   
 
   return (
@@ -48,6 +68,7 @@ function Home() {
               id="title"
               type="text"
               name="title"
+              value={searchVal}
               placeholder="Search here"
               className="w-full p-2 ring-2 focus:outline-none focus:ring-2 focus:ring-gray-900"
               
@@ -55,6 +76,7 @@ function Home() {
               required
             />
             <select onChange={handleChange} name="dataFilter" value={filter} className=" py-2 font-medium transition-all duration-300 transform mr-4 focus:outline-none focus:ring-0">
+            <option value="">No Filter</option>
             <option value="claimed">Claimed</option>
             <option value="unclaimed">UnClaimed</option>
             </select>

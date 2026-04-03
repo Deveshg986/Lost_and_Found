@@ -3,6 +3,27 @@ import axios from "axios";
 import React, { useState } from "react";
 
 const ItemCard = ({ items }) => {
+  const handleClaim = async (itemId) => {
+    const message = prompt("Enter the message to prove this is Your Item")
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        "http://localhost:5000/api/claims",
+        {
+          item_id: itemId,
+          message: message || null
+        },
+        {
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      alert(res.data.message);
+    } catch (err) {
+      alert(err.response?.data?.message || "Error claiming item")
+    }
+  }
   const [user] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
@@ -92,7 +113,9 @@ const ItemCard = ({ items }) => {
 
               {/* Claim only for approved */}
               {item.status === "APPROVED" && (
-                <button className="w-full bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium">
+                <button className="w-full bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                onClick={() => handleClaim(item.id)}
+                >
                   Claim Item
                 </button>
               )}
