@@ -1,40 +1,41 @@
 import axios from "axios";
-
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { createClaimAPI } from "../claims/claimsAPI";
+import API from "../utils/axiosInstance";
 
-const ItemCard = ({ items }) => {
+const ItemCard = ({ items, requests }) => {
+  const { userData } = useSelector(state => state.auth);
+
+  const [loadingId, setLoadingId] = useState(null);
+  const [claimedIds, setClaimedIds] = useState(new Set()); // track locally claimed items
+
   const handleClaim = async (itemId) => {
-    const message = prompt("Enter the message to prove this is Your Item")
+    const message = window.prompt("Enter Message");
+    if (!message) return;
+
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "http://localhost:5000/api/claims",
-        {
-          item_id: itemId,
-          message: message || null
-        },
-        {
-          headers:{
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      alert(res.data.message);
-    } catch (err) {
-      alert(err.response?.data?.message || "Error claiming item")
+      setLoadingId(itemId);
+      const data = await createClaimAPI(itemId, message);
+      alert(data.message || "Claim Submitted Successfully!");
+      // Mark this item as claimed locally so the button disappears immediately.
+      // B status sThe item's Dtays APPROVED until staff approves the claim.
+      setClaimedIds((prev) => new Set(prev).add(itemId));
+    } catch (error) {
+      console.error(error);
+      const errMsg = error.response?.data?.message || "Error Claiming Item";
+      alert(errMsg);
+    } finally {
+      setLoadingId(null);
     }
-  }
-  const [user] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+  };
 
   const baseURL = "http://localhost:5000/api/items/";
 
   const updateStatus = async (id, status) => {
     try {
+      setLoadingId(id);
       const token = localStorage.getItem("token");
-
       let url = "";
       let method = "put";
 
@@ -60,14 +61,17 @@ const ItemCard = ({ items }) => {
 
     } catch (err) {
       console.log(err);
-      alert("Error updating status");
+      alert("Error updating status: " + (err?.response?.data?.message || "Try again"));
+    } finally {
+      setLoadingId(null);
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((item) => (
-        <div
+
+        (<div
           key={item.id}
           className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
         >
@@ -81,12 +85,12 @@ const ItemCard = ({ items }) => {
 
             {/* Status badge */}
             <span className="absolute top-3 right-3 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium shadow-sm">
-              {item.status}
+              {claimedIds.has(item.id) ? "Requested Claim" : item.status}
             </span>
           </div>
 
           {/* Content */}
-          <div className="p-4 flex flex-col justify-between h-[220px]">
+          <div className="p-4 flex flex-col justify-between flex-grow">
             <div>
               <h3 className="text-lg font-semibold text-gray-800 truncate">
                 {item.title}
@@ -102,6 +106,10 @@ const ItemCard = ({ items }) => {
                   {item.location}
                 </p>
                 <p>
+                  <span className="font-medium text-gray-700">Reported by: </span>{" "}
+                  {item.reported_by_name}
+                </p>
+                <p>
                   <span className="font-medium text-gray-700">📅</span>{" "}
                   {new Date(item.created_at).toLocaleDateString()}
                 </p>
@@ -111,47 +119,51 @@ const ItemCard = ({ items }) => {
             {/* Actions */}
             <div className="mt-4 flex flex-col gap-2">
 
-              {/* Claim only for approved */}
-              {item.status === "APPROVED" && (
+              {/* Claim only for approved items the student hasn't claimed yet */}
+              {item.status === "APPROVED" && !claimedIds.has(item.id) && (
                 <button className="w-full bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
-                onClick={() => handleClaim(item.id)}
+                  onClick={() => handleClaim(item.id)}
+                  disabled={loadingId === item.id}
                 >
-                  Claim Item
+                  {loadingId === item.id ? "Claiming..." : "Claim Item"}
                 </button>
               )}
 
               {/* Staff controls */}
-              {user?.role?.trim().toLowerCase() === "staff" && item.status === "PENDING" && (
+              {userData?.role?.trim().toLowerCase() === "staff" && item.status === "PENDING" && (
                 <>
                   <button
                     onClick={() => updateStatus(item.id, "APPROVED")}
                     className="w-full bg-green-500 hover:bg-green-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                    disabled={loadingId === item.id}
                   >
-                    Approve Item
+                    {loadingId === item.id ? "Approving..." : "Approve Item"}
                   </button>
 
                   <button
                     onClick={() => updateStatus(item.id, "REJECTED")}
                     className="w-full bg-yellow-500 hover:bg-yellow-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                    disabled={loadingId === item.id}
                   >
-                    Reject Item
+                    {loadingId === item.id ? "Rejecting..." : "Reject Item"}
                   </button>
                 </>
               )}
 
               {/* Delete for staff */}
-              {user?.role?.trim().toLowerCase() === "staff" && (
+              {userData?.role?.trim().toLowerCase() === "staff" && (
                 <button
                   onClick={() => updateStatus(item.id, "DELETED")}
                   className="w-full bg-red-500 hover:bg-red-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                  disabled={loadingId === item.id}
                 >
-                  Delete Item
+                  {loadingId === item.id ? "Deleting..." : "Delete Item"}
                 </button>
               )}
 
             </div>
           </div>
-        </div>
+        </div>)
       ))}
     </div>
   );

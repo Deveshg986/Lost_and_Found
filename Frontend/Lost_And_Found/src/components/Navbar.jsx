@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/authSlice";
 
 export default function Navbar() {
@@ -9,16 +9,13 @@ export default function Navbar() {
   const dispatch = useDispatch();
 
   // const user = useSelector((state) => state.auth.userData)
-  const [user] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+  const { userData, isLoggedin } = useSelector(state=>state.auth);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     dispatch(logout());
-    navigate("/");
+    navigate("/", { replace: true});
   };
 
   const navElements = [
@@ -31,14 +28,18 @@ export default function Navbar() {
       to  : "/report",
     },
     {
+      name : "My posts",
+      to : "my-posts",
+    },
+  ];
+
+  userData?.role==='STAFF' ? navElements.push({
       name : "Requests",
       to  : "/requests",
-    },
-    {
-      name : "Contact",
-      to  : "/contact",
-    }
-  ]
+    },{
+      name : "Claims",
+      to  : "/claim-requests",
+    }) : null
 
   return (
     <nav className="bg-gray-900 text-white shadow-lg">
@@ -72,12 +73,12 @@ export default function Navbar() {
             })
           }
       
-          {user != null
+          {isLoggedin
           ? <button
               onClick={handleLogout}
               className="px-3 py-2 font-medium transition-all duration-300 transform text-amber-50 hover:text-indigo-300 hover:scale-110"
               >
-              LogOut
+              <i className="fa-solid fa-right-from-bracket"></i>
             </button>
           : null}
 

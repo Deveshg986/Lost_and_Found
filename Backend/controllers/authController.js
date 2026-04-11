@@ -1,10 +1,10 @@
 const db = require("../config/db");
 const bcrypt = require("bcrypt");
-const { json } = require("express");
+// const { json } = require("express");
 const jwt = require("jsonwebtoken");
 
 exports.login = (req, res) => {
-
+    console.log(req.body);
     const { email, password } = req.body;
 
     if (!email || !password) {

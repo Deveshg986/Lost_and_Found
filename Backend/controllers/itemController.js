@@ -1,4 +1,4 @@
-const { response } = require("express");
+const { response, json } = require("express");
 const db = require("../config/db");
 //Common Reoprt Controller For Both STUDENT and STAFF with Different Logic
 const insertItem = (req, res, status) => {
@@ -59,7 +59,15 @@ const addItem = (req, res) => insertItem(req, res, "PENDING");
 const addItemStaff = (req, res) => insertItem(req, res, "APPROVED");
 //This is For Both the STUDENT and STAFF to See Approved Items
 const allItems = (req, res) => {
-    const sql = "SELECT * FROM items WHERE status = 'APPROVED'";
+    const sql = `
+    SELECT 
+        items.*, 
+        users.full_name AS reported_by_name
+    FROM items
+    JOIN users ON items.uploaded_by = users.id
+    WHERE items.status IN ('APPROVED', 'CLAIMED')
+    ORDER BY items.id DESC
+    `;
 
     db.query(sql, (err, results) => {
         if (err) {
@@ -150,7 +158,7 @@ const approveItem = (req, res) => {
 const searchItems = (req, res) => {
     const { search, status, location, sort } = req.query;
 
-    let query = "SELECT * FROM items WHERE 1=1";
+    let query = "SELECT * FROM items WHERE status IN ('APPROVED', 'CLAIMED')"; // coz home has claimed + approved(unclaimed) items
     let params = [];
 
     if (search) {
@@ -173,7 +181,7 @@ const searchItems = (req, res) => {
     } else if (sort === "oldest") {
         query += " ORDER BY created_at ASC";
     } else {
-        query += " ORDER BY id DESC";
+        query += " ORDER BY created_at DESC"; // default sorting
     }
 
     db.query(query, params, (err, results) => {
@@ -208,6 +216,36 @@ const getStaff = (req, res) => {
     });
   });
 };
+
+const userReports = (req, res) => {
+    const userId = req.user?.id;
+
+    if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const sql = `
+        SELECT * 
+        FROM items 
+        WHERE uploaded_by = ? 
+        AND status IN ('PENDING','APPROVED','CLAIMED') 
+        ORDER BY created_at DESC
+    `;
+
+    db.query(sql, [userId], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "Database Error" });
+        }
+        if(result.lenght ===0){
+            return res.status(404).json({ message: "No reports found"})
+        }
+
+        return res.status(200).json({
+            count: result.length,
+            items: result
+        });
+    });
+};
 module.exports = {
     addItem,
     allItems,
@@ -218,5 +256,6 @@ module.exports = {
     addItemStaff,
     insertItem,
     searchItems,
-    getStaff
+    getStaff,
+    userReports
 };

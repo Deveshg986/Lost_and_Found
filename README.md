@@ -6,6 +6,7 @@ A full-stack Lost & Found system where students can report lost items and staff 
 - Role-based access (Student / Staff)
 - Report lost items with image upload
 - Staff approval system (approve / reject)
+- search items 
 - View approved items
 - Search items
 - Claim request system (in progress)
@@ -31,12 +32,16 @@ A full-stack Lost & Found system where students can report lost items and staff 
    JWT_SECRET=
 
 4. Start backend:
-   npm start
+   node server.js
 
 5. Start frontend:
    npm run dev
 
 ## Authors
 
-- Devesh Gawas — Main frontend structure and full backend development  
-- Swapnil Hadage — Frontend enhancements
+- Devesh Gawas — main frontend structure and full backend development  
+- Swapnil Hadage — Desgined and Implemented optimized frontend architecture using react
+                 — Integrated Redux Toolkit(RTK)
+                 — Refactored initial UI components for performance and maintainability
+                 — Improved code Structure, reusability amd responsiveness
+                 — Added new features and improved overall user experience

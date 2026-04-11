@@ -39,8 +39,8 @@ const claimItem = (req, res) => {
       }
 
       const insertQuery = `
-        INSERT INTO claims (item_id, user_id, message)
-        VALUES (?, ?, ?)
+        INSERT INTO claims (item_id, user_id, message, approved_by)
+        VALUES (?, ?, ?, NULL)
       `;
 
       db.query(insertQuery, [item_id, userId, message || null], (err, result) => {
@@ -174,13 +174,16 @@ const getAllClaims = (req, res) => {
       i.description AS item_description,
       i.status AS item_status,
       i.location,
-      i.image
+      i.image,
+
+      s.full_name AS approved_by_name
 
     FROM claims c
 
     INNER JOIN users u ON c.user_id = u.id
     INNER JOIN items i ON c.item_id = i.id
     LEFT JOIN users s ON c.approved_by = s.id
+
     WHERE 
       c.status = 'PENDING'
       AND i.status = 'APPROVED'
@@ -190,7 +193,7 @@ const getAllClaims = (req, res) => {
     LIMIT 50
   `;
 
-  db.query(allClaims, (err, results) => {
+  db.query(allClaims, [req.user.id], (err, results) => {
     if (err) {
       return res.status(500).json({ message: "Database Error" });
     }
