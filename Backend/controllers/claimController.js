@@ -165,13 +165,16 @@ const getAllClaims = (req, res) => {
       i.description AS item_description,
       i.status AS item_status,
       i.location,
-      i.image
+      i.image,
+
+      s.full_name AS approved_by_name
 
     FROM claims c
 
     INNER JOIN users u ON c.user_id = u.id
     INNER JOIN items i ON c.item_id = i.id
     LEFT JOIN users s ON c.approved_by = s.id
+
     WHERE 
       c.status = 'PENDING'
       AND i.status = 'APPROVED'

@@ -19,7 +19,7 @@ const ItemCard = ({ items, requests }) => {
       const data = await createClaimAPI(itemId, message);
       alert(data.message || "Claim Submitted Successfully!");
       // Mark this item as claimed locally so the button disappears immediately.
-      // The item's DB status stays APPROVED until staff approves the claim.
+      // B status sThe item's Dtays APPROVED until staff approves the claim.
       setClaimedIds((prev) => new Set(prev).add(itemId));
     } catch (error) {
       console.error(error);
@@ -107,7 +107,7 @@ const ItemCard = ({ items, requests }) => {
                 </p>
                 <p>
                   <span className="font-medium text-gray-700">Reported by: </span>{" "}
-                  {item.uploaded_by}
+                  {item.reported_by_name}
                 </p>
                 <p>
                   <span className="font-medium text-gray-700">📅</span>{" "}
