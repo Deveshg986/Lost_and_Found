@@ -12,7 +12,11 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+//test route
 
+app.get("/",(req, res)=>{
+    res.send("API is Running")
+})
 // serve uploaded images
 app.use("/uploads", express.static("uploads"));
 
@@ -26,9 +30,14 @@ db.connect((err) => {
         console.log("Database Connection Error", err);
     } else {
         console.log("Database Connected");
-
-        app.listen(PORT, () => {
-            console.log(`Server Started at PORT ${PORT}`);
-        });
     }
+});
+
+app.listen(PORT, () => {
+    console.log(`Server Started at PORT ${PORT}`);
+});
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send("Something broke!");
 });
