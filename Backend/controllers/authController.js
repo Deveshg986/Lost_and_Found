@@ -23,7 +23,7 @@ exports.login = (req, res) => {
                 error: err
             });
         }
-
+        console.log("DB Results:", results);
         if (results.length === 0) {
             return res.status(401).json({
                 message: "Invalid Email or Password"
