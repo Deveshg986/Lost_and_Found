@@ -1,10 +1,10 @@
 import axios from "axios";
-const API_URL = import.meta.env.VITE_API_URL;
+
 import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authSlice";
-
+const API_URL = import.meta.env.VITE_API_URL;
 function Login() {
   const navigate = useNavigate();
   const isLoggedin = useSelector(state=>state.auth.isLoggedin);
