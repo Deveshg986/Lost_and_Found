@@ -8,3 +8,4 @@ Need to improve naming of images captures using camera(within application) for s
 camera switch featue ... (front <=> back)
 
 Fronted Bug --> Fix API calls Take Referance of the Login.jsx page the
+push on main branch only pull main branch and work
