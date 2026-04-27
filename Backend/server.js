@@ -17,8 +17,6 @@ app.use(express.json());
 app.get("/",(req, res)=>{
     res.send("API is Running")
 })
-// serve uploaded images
-app.use("/uploads", express.static("uploads"));
 
 // routes
 app.use("/api/auth", authRoutes);

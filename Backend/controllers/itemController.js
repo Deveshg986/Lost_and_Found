@@ -4,7 +4,7 @@ const db = require("../config/db");
 const insertItem = (req, res, status) => {
     const { title, description, location, submitted_to} = req.body;
     const uploaded_by = req.user?.id;
-    const image = req.file ? req.file.filename : null;
+    const image = req.file ? req.file.path : null;
 
     if (!uploaded_by) {
         return res.status(401).json({ message: "Unauthorized" });

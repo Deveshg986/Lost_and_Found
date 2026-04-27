@@ -16,7 +16,7 @@
     getStaff,
     userReports
   } = require("../controllers/itemController");
-  const upload = require("../config/multer");
+  const upload = require("../middleware/upload");
 
   //These Are all of the Student API
   router.post("/report", verifyToken, upload.single("image"), addItem);
