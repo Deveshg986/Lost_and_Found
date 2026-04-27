@@ -29,7 +29,7 @@ useEffect(() => {
     <div className="w-full min-h-screen bg-gray-50">
       <div className="w-full bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between px-4 py-3 gap-3">
-          <h1 className="text-lg font-semibold text-gray-800">Welcome {userData?.role} {userData.full_name}
+          <h1 className="text-lg font-semibold text-gray-800">Hii, {userData.full_name}
           </h1>
           <div className="flex w-full md:w-auto gap-2 items-center">
             <input
