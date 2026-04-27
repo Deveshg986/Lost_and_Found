@@ -78,7 +78,7 @@ const ItemCard = ({ items, requests }) => {
           {/* Image */}
           <div className="relative">
             <img
-              src={`${import.meta.env.VITE_API_URL}/uploads/${item.image}`}
+              src={item.image}
               alt={item.title}
               className="w-full h-48 object-cover"
             />
