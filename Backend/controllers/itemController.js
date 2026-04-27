@@ -1,60 +1,87 @@
 const { response, json } = require("express");
 const db = require("../config/db");
+const cloudinary = require("../config/cloudinary");
 //Common Reoprt Controller For Both STUDENT and STAFF with Different Logic
-const insertItem = (req, res, status) => {
-    const { title, description, location, submitted_to} = req.body;
+
+
+const insertItem = async (req, res, status) => {
+  try {
+    const { title, description, location, submitted_to } = req.body;
     const uploaded_by = req.user?.id;
-    const image = req.file ? req.file.path : null;
 
     if (!uploaded_by) {
-        return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const allowedStatus = ["PENDING", "APPROVED"];
     if (!allowedStatus.includes(status)) {
-        return res.status(400).json({ message: "Invalid status" });
+      return res.status(400).json({ message: "Invalid status" });
     }
 
-    if (!title?.trim() || !location?.trim() || !image) {
-        return res.status(400).json({
-            message: "Title, Location and Image are required"
-        });
+    if (!title?.trim() || !location?.trim()) {
+      return res.status(400).json({
+        message: "Title and Location are required"
+      });
     }
-    if(!submitted_to){
-        return res.status(400).json({
-            message:"Staff selection is required"
-        })
+
+    if (!submitted_to) {
+      return res.status(400).json({
+        message: "Staff selection is required"
+      });
     }
+
+    if (!req.file) {
+      return res.status(400).json({
+        message: "Image is required"
+      });
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: "lost_and_found" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(req.file.buffer);
+    });
+
+    const image = result.secure_url; 
+
     const sql = `
-        INSERT INTO items
-        (title, description, location, image, status, uploaded_by, submitted_to)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO items
+      (title, description, location, image, status, uploaded_by, submitted_to)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
     const desc = description?.trim() || null;
 
     db.query(
-        sql,
-        [title.trim(), desc, location.trim(), image, status, uploaded_by, submitted_to],
-        (err, result) => {
-            if (err) {
-                console.error("Database Error:", err);
-                return res.status(500).json({ message: "Database Error" });
-            }
-
-            const message =
-                status === "APPROVED"
-                    ? "Item added and auto-approved"
-                    : "Item submitted for approval";
-
-            return res.status(201).json({
-                message,
-                itemId: result.insertId
-            });
+      sql,
+      [title.trim(), desc, location.trim(), image, status, uploaded_by, submitted_to],
+      (err, resultDb) => {
+        if (err) {
+          console.error("Database Error:", err);
+          return res.status(500).json({ message: "Database Error" });
         }
+
+        return res.status(201).json({
+          message:
+            status === "APPROVED"
+              ? "Item added and auto-approved"
+              : "Item submitted for approval",
+          itemId: resultDb.insertId
+        });
+      }
     );
+
+  } catch (err) {
+    console.error("Upload Error:", err);
+    return res.status(500).json({ message: "Upload failed" });
+  }
 };
-//Here the Common Controller use via STUDENT and STAFF with There Default status
+
+// routes
 const addItem = (req, res) => insertItem(req, res, "PENDING");
 const addItemStaff = (req, res) => insertItem(req, res, "APPROVED");
 //This is For Both the STUDENT and STAFF to See Approved Items
