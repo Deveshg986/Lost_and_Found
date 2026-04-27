@@ -30,7 +30,7 @@ const ItemCard = ({ items, requests }) => {
     }
   };
 
-  const baseURL = "http://localhost:5000/api/items/";
+  const baseURL = `${import.meta.env.VITE_API_URL}/api/items/`;
 
   const updateStatus = async (id, status) => {
     try {
@@ -78,7 +78,7 @@ const ItemCard = ({ items, requests }) => {
           {/* Image */}
           <div className="relative">
             <img
-              src={`http://localhost:5000/uploads/${item.image}`}
+              src={`${import.meta.env.VITE_API_URL}/uploads/${item.image}`}
               alt={item.title}
               className="w-full h-48 object-cover"
             />

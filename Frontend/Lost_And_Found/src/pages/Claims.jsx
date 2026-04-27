@@ -70,7 +70,7 @@ function Claims() {
                   {/* image */}
                   <div className="relative">
                     <img
-                      src={`http://localhost:5000/uploads/${claim.image}`}
+                      src={`${import.meta.env.VITE_API_URL}/uploads/${claim.image}`}
                       alt={claim.item_title}
                       className="w-full h-48 object-cover"
                     />

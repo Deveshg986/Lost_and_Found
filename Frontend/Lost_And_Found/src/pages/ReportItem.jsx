@@ -67,8 +67,8 @@ export default function ReportItem() {
       //Fix The Code For Security Pupose Status Should change in Backend based on role not from Frontend
       const url =
         user?.role?.toLowerCase() === "staff"
-          ? "http://localhost:5000/api/items/staff/report"
-          : "http://localhost:5000/api/items/report"
+          ? `${import.meta.env.VITE_API_URL}/api/items/staff/report`
+          : `${import.meta.env.VITE_API_URL}/api/items/report`
 
       const response = await axios.post(
         url,
