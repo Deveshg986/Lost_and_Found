@@ -13,6 +13,9 @@ function MyPosts() {
   const { visibleItems = [], loading, error } = useSelector 
   ((state) => state.items);
   
+  visibleItems.filter((post)=>
+    post.status.trim().toLowerCase() != "deleted"
+  )
 
   useEffect(() => {
     dispatch(getUserPosts());
