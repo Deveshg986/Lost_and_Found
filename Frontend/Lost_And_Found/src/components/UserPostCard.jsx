@@ -1,0 +1,117 @@
+import React, {useState} from 'react';
+import { useSelector } from 'react-redux';
+import API from "../utils/axiosInstance";
+import axios from "axios";
+
+function UserPostCard({ items }) {
+  const { userData } = useSelector(state => state.auth);
+  const [loadingId, setLoadingId] = useState(null);
+
+  const baseURL = `${import.meta.env.VITE_API_URL}/api/items/`;
+
+  const updateStatus = async (id, status) => {
+    try {
+      setLoadingId(id);
+      const token = localStorage.getItem("token");
+      let url = "";
+      let method = "put";
+
+      if (status === "APPROVED") {
+        url = `${baseURL}${id}/approve`;
+      } else if (status === "REJECTED") {
+        url = `${baseURL}${id}/reject`;
+      } else if (status === "DELETED") {
+        url = `${baseURL}${id}`;
+        method = "delete";
+      }
+
+      await axios({
+        method,
+        url,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      alert(`Item ${status.toLowerCase()} successfully`);
+      window.location.reload();
+
+    } catch (err) {
+      console.log(err);
+      alert("Error updating status: " + (err?.response?.data?.message || "Try again"));
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {items.map((item) => (
+        userData.id === item.uploaded_by ?
+        (<div
+          key={item.id}
+          className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+        >
+          {/* Image */}
+          <div className="relative">
+            <img
+              src={`${import.meta.env.VITE_API_URL}/uploads/${item.image}`}
+              alt={item.title}
+              className="w-full h-48 object-cover"
+            />
+
+            {/* Status badge */}
+            <span className="absolute top-3 right-3 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium shadow-sm">
+              {item.status}
+            </span>
+          </div>
+
+          {/* Content */}
+          <div className="p-4 flex flex-col justify-between flex-grow">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 truncate">
+                {item.title}
+              </h3>
+
+              {/* <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                {item.description}
+              </p> */}
+
+              <div className="mt-3 text-xs text-gray-600 space-y-1">
+                <p>
+                  <span className="font-medium text-gray-700">📍</span>{" "}
+                  {item.location}
+                </p>
+
+                <p>
+                  <span className="font-medium text-gray-700">📅</span>{" "}
+                  {new Date(item.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="mt-4 flex flex-col gap-2">
+
+              {/* Delete */}
+              {
+                <button
+                  onClick={() => updateStatus(item.id, "DELETED")}
+                  className="w-full bg-red-500 hover:bg-red-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
+                  disabled={loadingId === item.id}
+                >
+                  {loadingId === item.id ? "Deleting..." : "Delete Item"}
+                </button>
+              }
+
+            </div>
+          </div>
+        </div>) :
+        null
+      )
+      )}
+    </div>
+  )
+}
+
+export default UserPostCard
