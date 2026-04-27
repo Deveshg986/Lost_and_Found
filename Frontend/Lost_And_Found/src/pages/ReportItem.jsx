@@ -399,10 +399,10 @@ useEffect(()=>{
               required
               className="w-full border rounded-lg"
             >
-              <option value={1}>cse</option>
-              <option value={1}>ce</option>
-              <option value={1}>ee</option>
-              <option value={1}>me</option>
+              <option value={4}>cse</option>
+              <option value={4}>ce</option>
+              <option value={4}>ee</option>
+              <option value={4}>me</option>
             </select>
           </div>
 
