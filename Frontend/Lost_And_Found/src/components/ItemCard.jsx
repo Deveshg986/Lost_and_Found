@@ -77,11 +77,14 @@ const ItemCard = ({ items, requests }) => {
         >
           {/* Image */}
           <div className="relative">
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-full h-48 object-cover"
-            />
+          <img
+            src={
+              item.image?.startsWith("http")
+                ? item.image
+                : `${import.meta.env.VITE_API_URL}/uploads/${item.image}`
+            }
+            alt={item.title}
+          />
 
             {/* Status badge */}
             <span className="absolute top-3 right-3 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium shadow-sm">
