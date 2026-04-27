@@ -40,8 +40,8 @@ function Signup() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-indigo-500 to-blue-500">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-96">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-indigo-500 to-blue-500 p-4">
+      <div className="bg-white p-6 md:p-8 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-xl font-bold text-center mb-4">Signup</h2>
 
         <form onSubmit={handleSignup} className="space-y-3">

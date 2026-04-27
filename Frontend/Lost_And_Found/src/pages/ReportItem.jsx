@@ -227,8 +227,8 @@ useEffect(()=>{
     return <Navigate to={'/'} replace />
   }
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6 ">
-      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-start sm:items-center justify-center bg-gray-100 p-4 sm:p-6 py-6 ">
+      <div className="bg-white shadow-lg rounded-xl p-5 sm:p-8 w-full max-w-md mx-auto">
 
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Report Found Item
