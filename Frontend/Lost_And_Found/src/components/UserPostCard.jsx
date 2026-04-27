@@ -47,8 +47,7 @@ function UserPostCard({ items }) {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((item) => (
-        userData.id === item.uploaded_by ?
-        (<div
+        <div
           key={item.id}
           className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
         >
@@ -106,10 +105,8 @@ function UserPostCard({ items }) {
 
             </div>
           </div>
-        </div>) :
-        null
-      )
-      )}
+        </div>
+      ))}
     </div>
   )
 }
