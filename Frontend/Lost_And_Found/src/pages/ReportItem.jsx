@@ -142,7 +142,7 @@ export default function ReportItem() {
   async function startCamera() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: true
+        video: { facingMode: cameraFacing }
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
