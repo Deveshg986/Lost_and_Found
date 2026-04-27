@@ -37,16 +37,19 @@ const insertItem = async (req, res, status) => {
     }
 
     const result = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        { folder: "lost_and_found" },
+    cloudinary.uploader.upload_stream(
+        {
+        folder: "lost_and_found",
+        resource_type: "image",
+        format: "jpg",
+        },
         (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
+        if (error) reject(error);
+        else resolve(result);
         }
-      ).end(req.file.buffer);
+    ).end(req.file.buffer);
     });
-
-    const image = result.secure_url; 
+    const image = result.secure_url.replace("/upload/", "/upload/fl_attachment:false/");
 
     const sql = `
       INSERT INTO items
