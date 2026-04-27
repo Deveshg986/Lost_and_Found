@@ -9,7 +9,7 @@ export const searchItemsAPI = (filters) =>
 
 // get my-posts for user 
 export const getUserPostsAPI = () =>
-  API.get('/items/user-posts');
+  API.get('/items/user-reports');
 
 // get pending items of staff
 export const getPendingItemsAPI = ()=>
