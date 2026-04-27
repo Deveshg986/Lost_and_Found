@@ -54,9 +54,14 @@ function UserPostCard({ items }) {
           {/* Image */}
           <div className="relative">
             <img
-              src={`${import.meta.env.VITE_API_URL}/uploads/${item.image}`}
+              src={
+                item.image?.startsWith("http")
+                  ? item.image.trim()
+                  : `${import.meta.env.VITE_API_URL}/uploads/${item.image}`
+              }
               alt={item.title}
               className="w-full h-48 object-cover"
+              onError={(e) => console.log("FAILED:", item.image)}
             />
 
             {/* Status badge */}

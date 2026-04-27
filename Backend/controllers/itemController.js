@@ -258,6 +258,7 @@ const userReports = (req, res) => {
         SELECT * 
         FROM items 
         WHERE uploaded_by = ? 
+        AND status != 'DELETED'
         ORDER BY created_at DESC
     `;
 

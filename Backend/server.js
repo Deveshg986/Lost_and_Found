@@ -18,10 +18,15 @@ app.get("/",(req, res)=>{
     res.send("API is Running")
 })
 
+const path = require("path");
+
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/claims", claimRoutes);
+
+// serve static files (images)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 db.connect((err) => {
     if (err) {
