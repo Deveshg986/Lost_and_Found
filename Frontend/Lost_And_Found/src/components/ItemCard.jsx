@@ -77,13 +77,14 @@ const ItemCard = ({ items, requests }) => {
         >
           {/* Image */}
           <div className="relative">
-            <img
-            src={item.image?.trim()}
+          <img
+            src={
+              item.image?.startsWith("http")
+                ? item.image.trim()
+                : `${import.meta.env.VITE_API_URL}/uploads/${item.image}`
+            }
             alt={item.title}
-            onError={(e) => {
-              console.log("FAILED:", item.image);
-              e.target.src = "/placeholder.png";
-            }}
+            onError={(e) => console.log("FAILED:", item.image)}
           />
 
             {/* Status badge */}
