@@ -228,7 +228,6 @@ const userReports = (req, res) => {
         SELECT * 
         FROM items 
         WHERE uploaded_by = ? 
-        AND status IN ('PENDING','APPROVED','CLAIMED') 
         ORDER BY created_at DESC
     `;
 
@@ -236,7 +235,7 @@ const userReports = (req, res) => {
         if (err) {
             return res.status(500).json({ message: "Database Error" });
         }
-        if(result.lenght ===0){
+        if(result.length === 0){
             return res.status(404).json({ message: "No reports found"})
         }
 
