@@ -32,23 +32,34 @@ useEffect(() => {
           <h1 className="text-lg font-semibold text-gray-800">Hii, {userData.full_name}
           </h1>
           <div className="flex w-full md:w-auto gap-2 items-center">
-            <input
-              id="title"
-              type="text"
-              name="title"
-              value={searchVal}
-              placeholder="Search here"
-              className="w-full p-2 ring-2 focus:outline-none focus:ring-2 focus:ring-gray-900"
-              onChange={(e)=>setSearchval(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  setSearchval(e.target.value);
-                  dispatch(searchItems({ status, search: searchVal }));
-                  setSearchval('');
-                }
-              }}
-              required
-            />
+            <div className="relative w-full">
+              <input
+                id="title"
+                type="text"
+                name="title"
+                value={searchVal}
+                placeholder="Search here"
+                className="w-full p-2 pr-8 ring-1 ring-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900 rounded"
+                onChange={(e)=>setSearchval(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    dispatch(searchItems({ status, search: searchVal }));
+                  }
+                }}
+              />
+              {searchVal && (
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 focus:outline-none flex items-center justify-center p-1"
+                  onClick={() => {
+                    setSearchval('');
+                    dispatch(searchItems({ status, search: '' }));
+                  }}
+                >
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              )}
+            </div>
             <button
               disabled={loading}
               onClick={() => {
