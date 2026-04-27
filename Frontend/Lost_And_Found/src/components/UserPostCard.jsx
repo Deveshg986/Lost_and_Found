@@ -44,12 +44,22 @@ function UserPostCard({ items }) {
     }
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "APPROVED": return "bg-green-100 text-green-700 border-green-200";
+      case "PENDING": return "bg-yellow-100 text-yellow-700 border-yellow-200";
+      case "REJECTED": return "bg-red-100 text-red-700 border-red-200";
+      case "CLAIMED": return "bg-blue-100 text-blue-700 border-blue-200";
+      default: return "bg-gray-100 text-gray-700 border-gray-200";
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((item) => (
         <div
           key={item.id}
-          className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+          className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col"
         >
           {/* Image */}
           <div className="relative">
@@ -65,7 +75,7 @@ function UserPostCard({ items }) {
             />
 
             {/* Status badge */}
-            <span className="absolute top-3 right-3 bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium shadow-sm">
+            <span className={`absolute top-3 right-3 text-[10px] px-3 py-1 rounded-full font-bold shadow-sm border ${getStatusColor(item.status)}`}>
               {item.status}
             </span>
           </div>
@@ -76,10 +86,6 @@ function UserPostCard({ items }) {
               <h3 className="text-lg font-semibold text-gray-800 truncate">
                 {item.title}
               </h3>
-
-              {/* <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                {item.description}
-              </p> */}
 
               <div className="mt-3 text-xs text-gray-600 space-y-1">
                 <p>
@@ -96,24 +102,19 @@ function UserPostCard({ items }) {
 
             {/* Actions */}
             <div className="mt-4 flex flex-col gap-2">
-
-              {/* Delete */}
-              {
-                <button
-                  onClick={() => updateStatus(item.id, "DELETED")}
-                  className="w-full bg-red-500 hover:bg-red-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium"
-                  disabled={loadingId === item.id}
-                >
-                  {loadingId === item.id ? "Deleting..." : "Delete Item"}
-                </button>
-              }
-
+              <button
+                onClick={() => updateStatus(item.id, "DELETED")}
+                className="w-full bg-red-500 hover:bg-red-600 active:scale-[0.98] transition text-white text-sm py-2 rounded-lg font-medium shadow-sm hover:shadow-md"
+                disabled={loadingId === item.id}
+              >
+                {loadingId === item.id ? "Deleting..." : "Delete Item"}
+              </button>
             </div>
           </div>
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 export default UserPostCard
