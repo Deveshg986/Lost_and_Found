@@ -78,6 +78,7 @@ const ItemCard = ({ items, requests }) => {
           {/* Image */}
           <div className="relative">
           <img
+            className="w-full h-48 object-cover"
             src={
               item.image?.startsWith("http")
                 ? item.image.trim()
